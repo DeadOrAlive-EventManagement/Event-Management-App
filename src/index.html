@@ -51,9 +51,17 @@
               <a class="nav-link" href="#">Help</a>
           </li>
           <li class="nav-item">
-              <a class="nav-link" href="#">Contact Us</a>
+              <a class="nav-link" href="#contactUs">Contact Us</a>
           </li>
       </ul>
+
+      <ul class="navbar-nav my-0">
+          <li class="nav-item">
+              <a class="nav-link" href="#">Sign In(Username)</a>
+          </li>
+          </ul>
+             
+
       <!-- Links -->
   </div>
   <!-- Collapsible content -->
@@ -96,13 +104,31 @@
 
             <p class="h4 mb-4">Sign in</p>
 
-            <!-- Email -->
-            <input type="email" id="defaultLoginFormEmail" class="form-control mb-4" placeholder="E-mail">
+            <div class="row">
 
-            <!-- Password -->
-            <input type="password" id="defaultLoginFormPassword" class="form-control mb-4" placeholder="Password">
+                        <!--Grid column-->
+                        <div class="col-md-auto w-100">
+                            <div class="md-form mb-0">
+                                <input type="email" id="defaultLoginFormEmail" name="loginEmail" class="form-control">
+                                <label for="loginEmail" class="">Email</label>
+                            </div>
+                        </div>
+                        <!--Grid column-->
+                        </div>
+                        <div class="row">
 
-            <div class="d-flex justify-content-around">
+                        <!--Grid column-->
+                        <div class="col-md-auto w-100">
+                            <div class="md-form mb-0">
+                                <input type="password" id="defaultLoginFormPassword" name="loginPwd" class="form-control">
+                                <label for="loginPwd" class="">Password</label>
+                            </div>
+                        </div>
+                        <!--Grid column-->
+                        </div>
+
+
+            <div class="d-flex justify-content-around mt-3">
                 <div>
                     <!-- Remember me -->
                     <div class="custom-control custom-checkbox">
@@ -145,8 +171,11 @@
     </div>
     <!--Grid row-->
 
+
+  
+
     <!--Section: Contact v.2-->
-    <section class="section">
+    <section class="section" id="contactUs">
         <div class="mt-5 row">
             <div class="col-md-12">
               <!--Section heading-->
