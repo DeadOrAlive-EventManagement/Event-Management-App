@@ -23,3 +23,9 @@ https://mdbootstrap.com/forums/forum/support/
 
 Contact:
 office@mdbootstrap.com
+
+Test Without Server
+This folder contains all the individual files, with the correct linking for them. 
+Use this to test how webpages look.
+
+Please run server.py first. Use http:localhost:5000/ to load up the webpage 
