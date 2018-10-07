@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+<head>
+      <title>The Materialize Collapsible Example</title>
+      <meta name = "viewport" content = "width = device-width, initial-scale = 1">
+      <link rel = "stylesheet"
+         href = "https://fonts.googleapis.com/icon?family=Material+Icons">
+      <link rel = "stylesheet"
+         href = "https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.3/css/materialize.min.css">
+      <script type = "text/javascript"
+         src = "https://code.jquery.com/jquery-2.1.1.min.js"></script>
+      <script src = "https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.3/js/materialize.min.js">
+      </script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet">
+<link href="css/create_event.css" rel="stylesheet">
+
+<body>
+
+<form class = "col s12" id="regForm" action="/action_page.php">
+  <h2>Book an event</h2>
+  <!-- One "tab" for each step in the form: -->
+  <div class="tab">
+    <div class = "row">
+        <div class = "row">
+               <div class = "input-field col s6">
+                 <!-- Change the icon -->
+                  <i class = "material-icons prefix">cake</i>
+
+                  <input placeholder = "Enter Event Type" value = "" id = "event_type"
+                     type = "text" class = "active validate" required />
+                  <label for = "event_type">Event Type </label>
+               </div>
+
+               <div class = "input-field col s6">
+                 <!-- Change the icon -->
+                  <i class = "material-icons prefix">group</i>
+                  <label for = "num_people">Number of People</label>
+                  <input id = "num_people" type = "text" placeholder = "Enter Number of People"
+                     class = "validate" required />
+               </div>
+            </div>
+
+            <div class = "row">
+              <div class = "input-field col s6">
+                <!-- Change the icon -->
+                 <i class = "material-icons prefix">date_range</i>
+
+                 <input type = "text" class id = "dt_ev"  class = "active datepicker" required />
+                    <label for = "dt_ev"> Choose date</label>
+              </div>
+
+              <div class = "input-field col s6">
+                <!-- Change the icon -->
+                 <i class = "material-icons prefix">attach_money</i>
+                 <label for = "budget">Budget for the Event</label>
+                 <input id = "budget" type = "text" placeholder = "Enter Budget of the Event"
+                    class = "validate" required />
+              </div>
+            </div>
+
+      </div>
+    </div>
+
+  <div class="tab"><h5>Select your vendors</h5>:
+    <!-- We need to change this part -->
+    <div>
+      <ul class = "collapsible popout" data-collapsible = "accordion">
+       <li>
+          <div class = "collapsible-header">
+             <i class = "material-icons">account_balance</i>Pick your Venue</div>
+          <div class = "collapsible-body"><p>Choose from our reputed vendors</p>
+
+            <div class="row">
+              <div class="col s3">
+                <div class="card blue darken-1">
+                  <div class="card-content white-text">
+                    <span class="card-title">Ezra Home Delivery</span>
+                    <p>I am a very simple card. I am good at containing small bits of information.
+                    I am convenient because I require little markup to use effectively.</p>
+                  </div>
+                </div>
+              </div>
+              <div class="col s3">
+                <div class="card blue darken-1">
+                  <div class="card-content white-text">
+                    <span class="card-title">Tom's Bakery</span>
+                    <p>I am a very simple card. I am good at containing small bits of information.
+                    I am convenient because I require little markup to use effectively.</p>
+                  </div>
+                </div>
+              </div>
+              <div class="col s3">
+                <div class="card blue darken-1">
+                  <div class="card-content white-text">
+                    <span class="card-title">Timmy's Peaches</span>
+                    <p>I am a very simple card. I am good at containing small bits of information.
+                    I am convenient because I require little markup to use effectively.</p>
+                  </div>
+                </div>
+              </div>
+              <div class="col s3">
+                <div class="card blue darken-1">
+                  <div class="card-content white-text">
+                    <span class="card-title">Noah's Cafe</span>
+                    <p>I am a very simple card. I am good at containing small bits of information.
+                    I am convenient because I require little markup to use effectively.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+       </li>
+
+       <li>
+          <div class = "collapsible-header">
+             <i class = "material-icons">local_dining</i>Pick your Caterer</div>
+          <div class = "collapsible-body"><p>This is second section.</p></div>
+       </li>
+
+       <li>
+          <div class = "collapsible-header">
+             <i class = "material-icons">local_florist</i>Pick your Decor</div>
+          <div class = "collapsible-body"><p>This is third section.</p></div>
+       </li>
+       <li>
+          <div class = "collapsible-header">
+             <i class = "material-icons">audiotrack</i>Pick your Entertainment</div>
+          <div class = "collapsible-body"><p>This is third section.</p></div>
+       </li>
+    </ul>
+    </div>
+
+  </div>
+
+  <div style="overflow:auto;">
+    <div style="float:right;">
+       <button type="button" id="prevBtn" onclick="nextPrev(-1)" class = "btn waves-effect waves-teal">Previous</button>
+       <button type="button" id="nextBtn" onclick="nextPrev(1)" class = "btn waves-effect waves-teal">Next</button>
+    </div>
+  </div>
+  <!-- Circles which indicates the steps of the form: -->
+  <div style="text-align:center;margin-top:40px;">
+    <span class="step"></span>
+    <span class="step"></span>
+  </div>
+</form>
+<script type="text/javascript" src="js/create_event.js"></script>
+
+</body>
+</html>
