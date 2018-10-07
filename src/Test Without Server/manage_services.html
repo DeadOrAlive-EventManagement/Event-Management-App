@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <title>Material Design Bootstrap</title>
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <!-- Bootstrap core CSS -->
+  <link href="css/bootstrap.min.css" rel="stylesheet">
+  <!-- Material Design Bootstrap -->
+  <link href="css/mdb.min.css" rel="stylesheet">
+  <!-- Your custom styles (optional) -->
+  <link href="css/style.css" rel="stylesheet">
+</head>
+
+<body>
+<!--Main Navigation-->
+<header>
+<!--Navbar-->
+<nav class="navbar navbar-expand-lg navbar-dark primary-color fixed-top">
+
+  <!-- Navbar brand -->
+  <a class="navbar-brand" href="#">Event Manager</a>
+
+  <!-- Collapse button -->
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#basicExampleNav" aria-controls="basicExampleNav"
+      aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <!-- Collapsible content -->
+  <div class="collapse navbar-collapse" id="basicExampleNav">
+
+      <!-- Links -->
+      <ul class="navbar-nav mr-auto">
+          <li class="nav-item active">
+              <a class="nav-link" href="">Home
+                  <span class="sr-only">(current)</span>
+              </a>
+          </li>
+          <li class="nav-item">
+              <a class="nav-link" href="#">Manage Services</a>
+          </li>
+          <li class="nav-item">
+              <a class="nav-link" href="#">Manage Events</a>
+          </li>
+          <li class="nav-item">
+              <a class="nav-link" href="#">Help</a>
+          </li>
+          <li class="nav-item">
+              <a class="nav-link" href="#">Contact Us</a>
+          </li>
+      </ul>
+      <!-- Links -->
+  </div>
+  <!-- Collapsible content -->
+
+</nav>
+<!--/.Navbar-->
+</header>
+<!--Main Navigation-->
+
+<!--Main layout-->
+<main>
+<!--Main container-->
+<div class="container">
+    <!--Grid row-->
+    <div class="row">
+        <!--Grid column-->
+        <div class="mt-5 col-md-12">
+        </div>
+        <!--Grid column-->
+    </div>
+    <!--Grid row-->
+
+    <div class="mt-5 row">
+      <div class="modal fade" id="modalContactForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+          <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                  <div class="modal-header text-center">
+                      <h4 class="modal-title w-100">Add Service</h4>
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                      </button>
+                  </div>
+                  <!-- Modal body -->
+                  <div class="modal-body mx-2">
+                      <div class="md-form mb-3">
+                          <input type="text" id="form34" class="form-control">
+                          <label for="form34">Title</label>
+                      </div>
+                      <div class="md-form mb-3">
+                          <input type="number" id="form34" class="form-control">
+                          <label for="form34">Price</label>
+                      </div>
+                      <div class="md-form mb-3">
+                          <textarea type="text" id="form8" class="md-textarea form-control" rows="1"></textarea>
+                          <label for="form8">Description</label>
+                      </div>
+                      <div class="form-check mb-3">
+                        <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios1" value="catering" checked>
+                        <label class="form-check-label" for="exampleRadios1">
+                            Catering
+                        </label>
+                    </div>
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios2" value="decoration">
+                        <label class="form-check-label" for="exampleRadios2">
+                            Decoration
+                        </label>
+                    </div>
+                  </div>
+                  <div class="modal-footer d-flex justify-content-center">
+                      <button class="btn btn-primary">Save Changes</button>
+                  </div>
+              </div>
+          </div>
+      </div>
+
+      <div class="text-center">
+          <a href="" class="btn btn-primary mb-4" data-toggle="modal" data-target="#modalContactForm">Add service</a>
+      </div>
+    </div>
+
+    <!--Grid row-->
+    <div class="row">
+    
+    </div>
+    <!--Grid row-->
+</div>
+<!--Main container-->
+</main>
+<!--Main layout-->
+
+<!--Footer-->
+<footer>
+
+</footer>
+<!--Footer-->
+
+  <!-- SCRIPTS -->
+  <!-- JQuery -->
+  <script type="text/javascript" src="js/jquery-3.3.1.min.js"></script>
+  <!-- Bootstrap tooltips -->
+  <script type="text/javascript" src="js/popper.min.js"></script>
+  <!-- Bootstrap core JavaScript -->
+  <script type="text/javascript" src="js/bootstrap.min.js"></script>
+  <!-- MDB core JavaScript -->
+  <script type="text/javascript" src="js/mdb.min.js"></script>
+</body>
+</html>
