@@ -90,7 +90,7 @@
         <!--Grid row-->
     <div class="flex-center row mt-5 ">
         <!-- Default form login -->
-        <form class="text-center border border-light p-5 w-50" action="/doregister" method="POST">
+        <form class="text-center border border-light p-5 w-50 needs-validation" action="/doregister" method="POST" id = "Register" novalidate>
 
             <p class="h4 mb-4">Register</p>
 
@@ -99,8 +99,14 @@
                         <!--Grid column-->
                         <div class="col-md-auto w-100">
                             <div class="md-form mb-0">
-                                <input type="text" id="Name" name="registerName" class="form-control">
+                                <input type="text" id="Name" name="registerName" class="form-control" required>
                                 <label for="registerName" class="">Name</label>
+                                <!-- <div class="valid-feedback">
+                                    Looks good!
+                                </div> -->
+                                <div class="invalid-feedback">
+                                    Please provide a name.
+                                </div>
                             </div>
                         </div>
                         <!--Grid column-->
@@ -111,8 +117,14 @@
                         <!--Grid column-->
                         <div class="col-md-auto w-100">
                             <div class="md-form mb-0">
-                                <input type="email" id="Email" name="loginEmail" class="form-control">
+                                <input type="email" id="Email" name="loginEmail" class="form-control" onblur = "obj.checkEmail()" required>
                                 <label for="loginEmail" class="">Email</label>
+                                <!-- <div class="valid-feedback">
+                                        Looks good!
+                                </div> -->
+                                <div class="invalid-feedback" id="invalidEmail">
+                                        Please provide an email.
+                                </div>
                             </div>
                         </div>
                         <!--Grid column-->
@@ -123,9 +135,16 @@
                         <!--Grid column-->
                         <div class="col-md-auto w-100">
                             <div class="md-form mb-0">
-                                <input type="number" id="ContactNumber" name="registerPh" class="form-control">
+                                <input type="number" id="ContactNumber" name="registerPh" class="form-control" pattern= ".{10,10}"required>
                                 <label for="registerPh" class="">Contact Number</label>
+                                <!-- <div class="valid-feedback">
+                                        Looks good!
+                                </div> -->
+                                <div class="invalid-feedback">
+                                        Please provide a phone number.
+                                </div>
                             </div>
+                            
                         </div>
                         <!--Grid column-->
             </div>
@@ -135,8 +154,14 @@
                         <!--Grid column-->
                         <div class="col-md-auto w-100">
                             <div class="md-form mb-0">
-                                <input type="password" id="Password" name="loginPwd" class="form-control">
+                                <input type="password" id="Password" name="loginPwd" class="form-control" required>
                                 <label for="loginPwd" class="">Password</label>
+                                <!-- <div class="valid-feedback">
+                                        Looks good!
+                                </div> -->
+                                <div class="invalid-feedback">
+                                        Please provide a password.
+                                </div>
                             </div>
                         </div>
                         <!--Grid column-->
@@ -149,18 +174,27 @@
                         <!--Grid column-->
                         <div class="col-md-auto w-100">
                             <div class="md-form mb-0">
-                                <input type="password" id="ConfirmPassword" name="loginPwdC" class="form-control">
-                                <label for="loginPwdC" class="">ConfirmPassword</label>
+                                <input type="password" id="ConfirmPassword" name="loginPwdC" class="form-control" onblur = "obj.checkPassword()" required>
+                                <label for="loginPwdC" class="">Confirm Password</label>
+                                <!-- <div class="valid-feedback">
+                                    Looks good!
+                            </div> -->
+                            <div class="invalid-feedback" id = "invalidConPwd">
+                                    Please type in the password again.
                             </div>
+                            </div>
+                            
                         </div>
                         <!--Grid column-->
             </div>
+            
+
 
 
           
 
             <!-- Register button -->
-            <button class="btn btn-info btn-block my-4" type="submit">Register</button>
+            <button class="btn btn-info btn-block my-4" type="submit" id = "Submit">Register</button>
 
 
             <!-- Social login -->
@@ -206,5 +240,79 @@
   <script type="text/javascript" src="{{ url_for('static',filename = 'js/bootstrap.min.js')}}"></script>
   <!-- MDB core JavaScript -->
   <script type="text/javascript" src="{{ url_for('static',filename = 'js/mdb.min.js')}}"></script>
+  <script>
+      obj = {
+       stopSubmission: function() {
+            'use strict';
+            window.addEventListener('load', function() {
+            // Fetch all the forms we want to apply custom Bootstrap validation styles to
+            var forms = document.getElementsByClassName('needs-validation');
+            // Loop over them and prevent submission
+            var validation = Array.prototype.filter.call(forms, function(form) {
+            form.addEventListener('submit', function(event) {
+                if (form.checkValidity() === false) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                form.classList.add('was-validated');
+            }, false);
+            });
+        }, false);
+        },
+    checkEmail: function()
+    {
+        emailElement = $('#Email');
+        val = emailElement.val()
+        data = {"email" : val}
+        console.log(data)
+        $.post("checkemail",data,function(result){
+            emailElement = $('#Email')[0]
+            console.log("result is " + result)
+            myForm = $("#Register")
+            if(result == "False")
+            {
+                emailElement.setCustomValidity('This email is already taken. If this is yours, please sign in.')
+                $('#invalidEmail').html("This email is already taken. If this is yours, please sign in.")
+                myForm.find(':submit').click();
+            }
+            else if(emailElement.value == '')
+            {
+                emailElement.setCustomValidity('Please provide an email id')
+                $('#invalidEmail').html("Please provide an email id.")
+                myForm.find(':submit').click();
+            }
+            else
+            {
+                emailElement.setCustomValidity('')
+            }
+            
+        })
+    },
+    checkPassword: function()
+    {
+        pwd = $("#Password")
+        conPwd = $("#ConfirmPassword")
+        if(conPwd.val() =="")
+        {
+            conPwd[0].setCustomValidity('Please type in password again.')
+           $('#invalidConPwd').html("Please type in password again.")
+           $("#Register").find(':submit').click();
+        }
+        else if(conPwd.val() != pwd.val())
+        {
+            conPwd[0].setCustomValidity('Passwords do not match')
+           $('#invalidConPwd').html("Passwords do not match.")
+           $("#Register").find(':submit').click();
+        }
+        else
+        {
+            conPwd[0].setCustomValidity('')
+        }
+        
+    }
+      }
+      obj.stopSubmission();
+
+  </script>
 </body>
 </html>

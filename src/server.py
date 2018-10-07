@@ -15,6 +15,20 @@ cursor = db.cursor()
 def index():
     '''This function renders the index page of the EventManagement site'''
     return render_template('index.html')
+@app.route('/checkemail',methods = ['POST','GET'])
+def check_email():
+    '''This function checks if the email is already in the database, i.e., already registered'''
+    print("form is ",request.form)
+
+    print("json is ",request.json)
+    email = request.form['email']
+    sql = """SELECT * FROM Customer WHERE email=%s"""
+    args =([email])
+    cursor.execute(sql,args)
+    results = cursor.fetchall()
+    if(results):
+        return "False"
+    return "True"
 
 @app.route('/doregister',methods = ['POST'])
 def do_register():
@@ -63,8 +77,8 @@ def do_sigin():
     Redirects to /home so that it makes more sense to user'''
     #add checking procedure
     #get values
-    email = request.form["loginEmail"]
-    pwd = request.form["loginPwd"]
+    email = request.form["email"]
+    pwd = request.form["pwd"]
 
     #do the check
     sql = "SELECT customer_id,first_name,pwd from Customer where email = %s"
@@ -80,11 +94,14 @@ def do_sigin():
             session.clear()
             session['customer_id'] = row[0]
             session['name'] = row[1]
-            return redirect(url_for('home'))
+            return "True"
+            # return redirect(url_for('home'))
         else:
             # wrong password, tell user 
             # print("Forgot password!")
-            return redirect(url_for('index'))
+            session.clear()
+            return "False"
+            # return redirect(url_for('index'))
     else:
         # user not registerd
         return redirect(url_for('register'))
@@ -92,13 +109,20 @@ def do_sigin():
     #dynamically add error message in signin in case validation fails
     #in case of sucesss add session variables 
     return redirect(url_for('index'))
+@app.route('/signin',methods=['POST'])
+def signin():
+    '''Redirects to correct page if session values are set
+    This is because password checking is done as part of form validation'''
+    if(session['customer_id']):
+        return redirect(url_for('home'))
+    return redirect(url_for('index'))
 
 @app.route('/home')
 def home():
     '''This funnction shows the user the homepage. Username will be displayed top left, 
     and all current events will be displayed on the page, dynamically.'''
     # use render templeate functionality to automatically add name and other data 
-    return render_template('manage_events.html')
+    return render_template('manage_events.html',name = session['name'])
 
 @app.route('/logout')
 def logout():

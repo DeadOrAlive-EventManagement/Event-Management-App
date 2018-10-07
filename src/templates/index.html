@@ -102,7 +102,7 @@
         <!--Grid row-->
     <div class="flex-center row mt-5">
         <!-- Default form login -->
-        <form class="text-center border border-light p-5" action ="/dosignin" method = "POST">
+        <form class="text-center border border-light p-5 needs-validation" action ="/signin" method = "POST" id = "SignIn" novalidate>
 
             <p class="h4 mb-4">Sign in</p>
 
@@ -111,8 +111,11 @@
                         <!--Grid column-->
                         <div class="col-md-auto w-100">
                             <div class="md-form mb-0">
-                                <input type="email" id="defaultLoginFormEmail" name="loginEmail" class="form-control">
+                                <input type="email" id="defaultLoginFormEmail" name="loginEmail" class="form-control" onblur = "obj.checkEmail()" required>
                                 <label for="loginEmail" class="">Email</label>
+                                <div class="invalid-feedback" id = "invalidEmail">
+                                       Could not find this email ID. Please register.
+                                </div>
                             </div>
                         </div>
                         <!--Grid column-->
@@ -122,8 +125,11 @@
                         <!--Grid column-->
                         <div class="col-md-auto w-100">
                             <div class="md-form mb-0">
-                                <input type="password" id="defaultLoginFormPassword" name="loginPwd" class="form-control">
+                                <input type="password" id="defaultLoginFormPassword" name="loginPwd" class="form-control" onblur = "obj.checkPassword()" required>
                                 <label for="loginPwd" class="">Password</label>
+                                <div class="invalid-feedback" id = "invalidPwd">
+                                        Password is invalid. 
+                                 </div>
                             </div>
                         </div>
                         <!--Grid column-->
@@ -293,5 +299,85 @@
   <script type="text/javascript" src="{{ url_for('static',filename = 'js/bootstrap.min.js')}}"></script>
   <!-- MDB core JavaScript -->
   <script type="text/javascript" src="{{ url_for('static',filename = 'js/mdb.min.js')}}"></script>
+
+  <script>
+        obj = {
+         stopSubmission: function() {
+              'use strict';
+              window.addEventListener('load', function() {
+              // Fetch all the forms we want to apply custom Bootstrap validation styles to
+              var forms = document.getElementsByClassName('needs-validation');
+              // Loop over them and prevent submission
+              var validation = Array.prototype.filter.call(forms, function(form) {
+              form.addEventListener('submit', function(event) {
+                  if (form.checkValidity() === false) {
+                      event.preventDefault();
+                      event.stopPropagation();
+                  }
+                  form.classList.add('was-validated');
+              }, false);
+              });
+          }, false);
+          },
+        checkEmail: function()
+        {
+          emailElement = $('#defaultLoginFormEmail');
+          val = emailElement.val()
+          data = {"email" : val}
+          console.log(data)
+          $.post("checkemail",data,function(result){
+              emailElement = $('#defaultLoginFormEmail')[0]
+              console.log("result is " + result)
+              myForm = $("#SignIn")
+              if(result == "False")
+              {
+                  emailElement.setCustomValidity('')
+                //   $('#invalidEmail').html("This email is already taken. If this is yours, please sign in.")
+              }
+              else if(emailElement.value == '')
+              {
+                  emailElement.setCustomValidity('Please provide an email id')
+                  $('#invalidEmail').html("Please provide an email id.")
+                  myForm.find(':submit').click();
+              }
+              else
+              {
+                  emailElement.setCustomValidity('Could not find this email ID. Please register.')
+                  $('#invalidEmail').html("Could not find this email ID. Please register.")
+                  myForm.find(':submit').click();
+              }
+             
+          })
+      },
+      checkPassword: function()
+      {
+          pwd = $("#defaultLoginFormPassword");
+          emailElement = $('#defaultLoginFormEmail');
+          data = {"email": emailElement.val(),"pwd": pwd.val()}
+          $.post("dosignin",data,function(result){
+            pwd = $("#defaultLoginFormPassword");
+            if(result == "False")
+            {
+                
+                pwd[0].setCustomValidity('Invalid Password')
+                $('#invalidPwd').html("Invalid Password")
+                $("#SignIn").find(':submit').click();
+            }
+            else if(pwd.val() == '')
+            {
+                pwd[0].setCustomValidity('Please enter your Password')
+                $('#invalidPwd').html("Please enter your Password")
+                $("#SignIn").find(':submit').click();
+            }
+            else
+            {
+                pwd[0].setCustomValidity('')
+            }
+
+          })
+      }
+        }
+        obj.stopSubmission();
+    </script>
 </body>
 </html>
