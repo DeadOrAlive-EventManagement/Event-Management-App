@@ -1,8 +1,15 @@
 # Decide wheter to use SQLAlchemy (ORM) or MySQLdb (Might have to use a fork, MySQLDb does not have good python3 support) 
+# For now going with pymysql as it is good enough and very similar to MySQLdb
 # Please follow the following naming convention: long_function_name(var_one,var_two)
 from flask import Flask,flash,session, render_template, request, redirect, Response ,jsonify, json, url_for
+from werkzeug.security import generate_password_hash, check_password_hash
+import pymysql
 
 app = Flask(__name__)
+app.secret_key = 'totally a secret lolz'
+db = pymysql.connect("localhost","root","","eventmanagement",charset='utf8')
+cursor = db.cursor()
+
 
 @app.route('/')
 def index():
@@ -12,7 +19,30 @@ def index():
 @app.route('/doregister',methods = ['POST'])
 def do_register():
     '''This function enters user details into the database, then shows the "You have registered! page'''
-    #Add actual functionality here. Ideally have another py file that handles all user related interactions, import and call functions here
+    #Get the values from the post form. Use generate_hash before saving for security reasons.
+    name = request.form['registerName'] 
+    names = name.split()
+    email = request.form['loginEmail']
+    number = request.form['registerPh']
+    pwd = request.form['loginPwd']
+    hashed_pwd = generate_password_hash(pwd)
+
+    #check if the user already exists 
+    sql = """SELECT * FROM Customer WHERE email=%s"""
+    args =([email])
+    cursor.execute(sql,args)
+    results = cursor.fetchall()
+    if(results):
+        #Do appropriate error handling
+        return redirect(url_for('index'))
+    else:
+        sql = """INSERT INTO Customer(email,first_name,middle_name,last_name,phone_number,pwd) values(%s,%s,%s,%s,%s,%s)"""
+        if(len(names) == 2):
+            args = (email,names[0],None,names[1],number,hashed_pwd)
+        else:
+            args = (email,names[0],names[1],names[2],number,hashed_pwd)
+        cursor.execute(sql,args)
+        db.commit()
     # Using the redirect function because then the "/registered endpoint will show up, which makes more sense to user"
     return redirect(url_for('registered'))
 
@@ -32,9 +62,36 @@ def do_sigin():
     It also creates a session, with the Username stored.
     Redirects to /home so that it makes more sense to user'''
     #add checking procedure
+    #get values
+    email = request.form["loginEmail"]
+    pwd = request.form["loginPwd"]
+
+    #do the check
+    sql = "SELECT customer_id,first_name,pwd from Customer where email = %s"
+    args = ([email])
+
+    cursor.execute(sql,args)
+    results = cursor.fetchall()
+    if(results):
+        row = results[0]
+        if(check_password_hash(row[2],pwd)):
+            # do session stuff
+            # print("Login succesfull!")
+            session.clear()
+            session['customer_id'] = row[0]
+            session['name'] = row[1]
+            return redirect(url_for('home'))
+        else:
+            # wrong password, tell user 
+            # print("Forgot password!")
+            return redirect(url_for('index'))
+    else:
+        # user not registerd
+        return redirect(url_for('register'))
+
     #dynamically add error message in signin in case validation fails
     #in case of sucesss add session variables 
-    return redirect(url_for('home'))
+    return redirect(url_for('index'))
 
 @app.route('/home')
 def home():
@@ -42,6 +99,11 @@ def home():
     and all current events will be displayed on the page, dynamically.'''
     # use render templeate functionality to automatically add name and other data 
     return render_template('manage_events.html')
+
+@app.route('/logout')
+def logout():
+    session.clear()
+    redirect(url_for('index'))
 
 if __name__ == '__main__':
 	# run!
