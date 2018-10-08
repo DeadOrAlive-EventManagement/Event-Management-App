@@ -128,7 +128,7 @@
                                 <input type="password" id="defaultLoginFormPassword" name="loginPwd" class="form-control" onblur = "obj.checkPassword()" required>
                                 <label for="loginPwd" class="">Password</label>
                                 <div class="invalid-feedback" id = "invalidPwd">
-                                        Password is invalid. 
+                                        Please enter the password. 
                                  </div>
                             </div>
                         </div>
@@ -354,6 +354,14 @@
           pwd = $("#defaultLoginFormPassword");
           emailElement = $('#defaultLoginFormEmail');
           data = {"email": emailElement.val(),"pwd": pwd.val()}
+          if(pwd.val() == '')
+          {
+                pwd[0].setCustomValidity('Please enter your Password')
+                $('#invalidPwd').html("Please enter your Password")
+                $("#SignIn").find(':submit').click();
+                console.log("Empty")
+                return 
+          }
           $.post("dosignin",data,function(result){
             pwd = $("#defaultLoginFormPassword");
             if(result == "False")
@@ -362,12 +370,7 @@
                 pwd[0].setCustomValidity('Invalid Password')
                 $('#invalidPwd').html("Invalid Password")
                 $("#SignIn").find(':submit').click();
-            }
-            else if(pwd.val() == '')
-            {
-                pwd[0].setCustomValidity('Please enter your Password')
-                $('#invalidPwd').html("Please enter your Password")
-                $("#SignIn").find(':submit').click();
+                console.log("In here")
             }
             else
             {
