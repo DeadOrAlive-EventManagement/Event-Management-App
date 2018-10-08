@@ -51,7 +51,9 @@ def do_register():
         return redirect(url_for('index'))
     else:
         sql = """INSERT INTO Customer(email,first_name,middle_name,last_name,phone_number,pwd) values(%s,%s,%s,%s,%s,%s)"""
-        if(len(names) == 2):
+        if(len(names) == 1):
+            args = (email,names[0],None,"",number,hashed_pwd)
+        elif(len(names) == 2):
             args = (email,names[0],None,names[1],number,hashed_pwd)
         else:
             args = (email,names[0],names[1],names[2],number,hashed_pwd)
@@ -90,7 +92,7 @@ def do_sigin():
         row = results[0]
         if(check_password_hash(row[2],pwd)):
             # do session stuff
-            # print("Login succesfull!")
+            print("Login succesfull!")
             session.clear()
             session['customer_id'] = row[0]
             session['name'] = row[1]
@@ -114,10 +116,39 @@ def signin():
 
 @app.route('/home')
 def home():
-    '''This funnction shows the user the homepage. Username will be displayed top left, 
+    '''This funnction shows the user the homepage. Username will be displayed top right, 
     and all current events will be displayed on the page, dynamically.'''
     # use render templeate functionality to automatically add name and other data 
-    return render_template('manage_events.html',name = session['name'])
+    if 'name' in session:
+        return render_template('manage_events.html',name = session['name'])
+    return redirect(url_for('index'))
+
+@app.route('/create')
+def create():
+    '''This funnction shows the user the create event page. Username will be displayed top right, 
+    and all current events will be displayed on the page, dynamically.'''
+    # use render templeate functionality to automatically add name and other data 
+    if 'name' in session:
+        return render_template('create_event.html',name = session['name'])
+    return redirect(url_for('index'))
+
+@app.route('/contact')
+def contact():
+    '''This funnction shows the user the contact us page. Username will be displayed top right, 
+   '''
+    # use render templeate functionality to automatically add name and other data 
+    if 'name' in session:
+        return render_template('contact.html',name = session['name'])
+    return render_template('contact.html',name = "")
+
+@app.route('/contactSend', methods=['GET','POST'])
+def contacted():
+    '''This funnction shows the user the contact us page. Username will be displayed top right, 
+   '''
+    # use render templeate functionality to automatically add name and other data 
+    if 'name' in session:
+        return render_template('contacted.html',name = session['name'])
+    return render_template('contacted.html',name = "")
 
 @app.route('/logout')
 def logout():
