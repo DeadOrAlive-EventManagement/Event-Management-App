@@ -102,13 +102,8 @@ def do_sigin():
             session.clear()
             return "False"
             # return redirect(url_for('index'))
-    else:
-        # user not registerd
-        return redirect(url_for('register'))
+    return "False"
 
-    #dynamically add error message in signin in case validation fails
-    #in case of sucesss add session variables 
-    return redirect(url_for('index'))
 @app.route('/signin',methods=['POST'])
 def signin():
     '''Redirects to correct page if session values are set

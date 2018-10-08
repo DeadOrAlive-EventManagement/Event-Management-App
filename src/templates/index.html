@@ -338,13 +338,13 @@
               {
                   emailElement.setCustomValidity('Please provide an email id')
                   $('#invalidEmail').html("Please provide an email id.")
-                  myForm.find(':submit').click();
+                //   myForm.find(':submit').click();
               }
               else
               {
                   emailElement.setCustomValidity('Could not find this email ID. Please register.')
                   $('#invalidEmail').html("Could not find this email ID. Please register.")
-                  myForm.find(':submit').click();
+                //   myForm.find(':submit').click();
               }
              
           })
@@ -361,13 +361,13 @@
                 
                 pwd[0].setCustomValidity('Invalid Password')
                 $('#invalidPwd').html("Invalid Password")
-                $("#SignIn").find(':submit').click();
+                // $("#SignIn").find(':submit').click();
             }
             else if(pwd.val() == '')
             {
                 pwd[0].setCustomValidity('Please enter your Password')
                 $('#invalidPwd').html("Please enter your Password")
-                $("#SignIn").find(':submit').click();
+                // $("#SignIn").find(':submit').click();
             }
             else
             {
