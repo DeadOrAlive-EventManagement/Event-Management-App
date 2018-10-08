@@ -108,7 +108,7 @@ def do_sigin():
 def signin():
     '''Redirects to correct page if session values are set
     This is because password checking is done as part of form validation'''
-    if(session['customer_id']):
+    if('customer_id' in session):
         return redirect(url_for('home'))
     return redirect(url_for('index'))
 
