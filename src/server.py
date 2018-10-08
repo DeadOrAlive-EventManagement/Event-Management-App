@@ -7,7 +7,7 @@ import pymysql
 
 app = Flask(__name__)
 app.secret_key = 'totally a secret lolz'
-db = pymysql.connect("localhost","root","","eventmanagement",charset='utf8')
+db = pymysql.connect("localhost","root","","SE_Project",charset='utf8')
 cursor = db.cursor()
 
 
@@ -111,13 +111,28 @@ def signin():
     if('customer_id' in session):
         return redirect(url_for('home'))
     return redirect(url_for('index'))
+    # return "False"
 
 @app.route('/home')
 def home():
     '''This funnction shows the user the homepage. Username will be displayed top left, 
     and all current events will be displayed on the page, dynamically.'''
     # use render templeate functionality to automatically add name and other data 
-    return render_template('manage_events.html',name = session['name'])
+    #test data
+    events = dict()
+    events["Birthday"] = dict()
+    events["Birthday"]["description"] = "Birthday Party for Ashley"
+    vendors = dict()
+    vendors["Ivy Park Venue"] = dict()
+    vendors["Ivy Park Venue"]["service"] = "Venue"
+    vendors["Ivy Park Venue"]["status"] = "Confirmed"
+    vendors["Ivy Park Venue"]["color"] = "green"
+    vendors["HKG Catereres"] = dict()
+    vendors["HKG Catereres"]["service"] = "Caterer"
+    vendors["HKG Catereres"]["status"] = "Waiting"
+    vendors["HKG Catereres"]["color"] = "orange"
+    events["Birthday"]["vendors"] = vendors
+    return render_template('manage_events.html',name = session['name'], events = events)
 
 @app.route('/logout')
 def logout():
