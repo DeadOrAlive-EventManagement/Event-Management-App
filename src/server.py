@@ -118,7 +118,7 @@ def signin():
 
 @app.route('/home')
 def home():
-    '''This funnction shows the user the homepage. Username will be displayed top right, 
+    '''This function shows the user the homepage. Username will be displayed top right, 
     and all current events will be displayed on the page, dynamically.'''
     # use render templeate functionality to automatically add name and other data 
     #test data
@@ -135,9 +135,9 @@ def home():
     vendors["HKG Catereres"]["status"] = "Waiting"
     vendors["HKG Catereres"]["color"] = "orange"
     events["Birthday"]["vendors"] = vendors
-    return render_template('manage_events.html',name = session['name'])
+    return render_template('manage_events.html', name = session['name'], events = events)
     if 'name' in session:
-        return render_template('manage_events.html',name = session['name'], events = events)
+        return render_template('manage_events.html', name = session['name'], events = events)
     return redirect(url_for('index'))
 
 @app.route('/create')
