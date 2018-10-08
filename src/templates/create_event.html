@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head>
-      <title>The Materialize Collapsible Example</title>
+      <title>Create Event</title>
       <meta name = "viewport" content = "width = device-width, initial-scale = 1">
+
       <!-- Font Awesome -->
       <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
       <!-- Bootstrap core CSS -->
@@ -15,13 +16,7 @@
          href = "https://fonts.googleapis.com/icon?family=Material+Icons">
       <link rel = "stylesheet"
          href = "https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.3/css/materialize.min.css">
-      <script type = "text/javascript"
-         src = "https://code.jquery.com/jquery-2.1.1.min.js"></script>
-      <script src = "https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.3/js/materialize.min.js">
-      </script>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet">
-<link href="css/create_event.css" rel="stylesheet">
+      <link href="css/create_event.css" rel="stylesheet">
 
 <body>
 
@@ -42,14 +37,12 @@
   
         <!-- Links -->
         <ul class="navbar-nav mr-auto">
-            <li class="nav-item active">
-                <a class="nav-link" href=#>Home
-                </a>
+            <li class="nav-item">
+                <a class="nav-link" href="/home">Home</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="/create">Create Event</a>
             </li>
-            
             <li class="nav-item">
                 <a class="nav-link" href="#">Help</a>
             </li>
@@ -57,6 +50,7 @@
                 <a class="nav-link" href="/contact">Contact Us</a>
             </li>
         </ul>
+
         <!-- Links -->
         <span class="navbar-text white-text">
           Welcome, {{name}}!
@@ -68,8 +62,8 @@
   <!--/.Navbar-->
 
 
-<form class = "col s12" id="regForm" action="/action_page.php">
-  <h2>Book an event</h2>
+<form class = "col-md-12 container mt-5" id="regForm" action="/action_page.php">
+  <h4>Book an event</h4>
   <!-- One "tab" for each step in the form: -->
   <div class="tab">
     <div class = "row">
@@ -77,18 +71,15 @@
                <div class = "input-field col s6">
                  <!-- Change the icon -->
                   <i class = "material-icons prefix">cake</i>
-
-                  <input placeholder = "Enter Event Type" value = "" id = "event_type"
-                     type = "text" class = "active validate" required />
-                  <label for = "event_type">Event Type </label>
+                  <label for = "event_type">Event Type</label>
+                  <input value = "" id = "event_type" type = "text" class = "active validate" required />
                </div>
 
                <div class = "input-field col s6">
                  <!-- Change the icon -->
                   <i class = "material-icons prefix">group</i>
                   <label for = "num_people">Number of People</label>
-                  <input id = "num_people" type = "text" placeholder = "Enter Number of People"
-                     class = "validate" required />
+                  <input id = "num_people" type = "text" class = "validate" required />
                </div>
             </div>
 
@@ -96,17 +87,15 @@
               <div class = "input-field col s6">
                 <!-- Change the icon -->
                  <i class = "material-icons prefix">date_range</i>
-
-                 <input type = "text" class id = "dt_ev"  class = "active datepicker" required />
-                    <label for = "dt_ev"> Choose date</label>
+                 <label for = "dt_ev"> Choose date</label>
+                 <input type = "text" class id = "dt_ev"  class = "active datepicker" required />   
               </div>
 
               <div class = "input-field col s6">
                 <!-- Change the icon -->
                  <i class = "material-icons prefix">attach_money</i>
-                 <label for = "budget">Budget for the Event</label>
-                 <input id = "budget" type = "text" placeholder = "Enter Budget of the Event"
-                    class = "validate" required />
+                 <label for = "budget">Budget for Event</label>
+                 <input id = "budget" type = "text" class = "validate" required />
               </div>
             </div>
 
@@ -187,8 +176,8 @@
 
   <div style="overflow:auto;">
     <div style="float:right;">
-       <button type="button" id="prevBtn" onclick="nextPrev(-1)" class = "btn waves-effect waves-teal">Previous</button>
-       <button type="button" id="nextBtn" onclick="nextPrev(1)" class = "btn waves-effect waves-teal">Next</button>
+       <button type="button" id="prevBtn" onclick="nextPrev(-1)" class = "btn btn-primary">Previous</button>
+       <button type="button" id="nextBtn" onclick="nextPrev(1)" class = "btn btn-primary">Next</button>
     </div>
   </div>
   <!-- Circles which indicates the steps of the form: -->
@@ -208,6 +197,8 @@
  <!-- MDB core JavaScript -->
  <script type="text/javascript" src="{{ url_for('static',filename = 'js/mdb.min.js')}}"></script>
 
+  <script type = "text/javascript" src = "https://code.jquery.com/jquery-2.1.1.min.js"></script>
+  <script src = "https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.3/js/materialize.min.js"></script>
 
 </body>
 </html>
