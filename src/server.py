@@ -124,6 +124,7 @@ def home():
     events = dict()
     events["Birthday"] = dict()
     events["Birthday"]["description"] = "Birthday Party for Ashley"
+    events["Birthday"]["date"] = "06-08-2018"
     vendors = dict()
     vendors["Ivy Park Venue"] = dict()
     vendors["Ivy Park Venue"]["service"] = "Venue"
@@ -134,9 +135,9 @@ def home():
     vendors["HKG Catereres"]["status"] = "Waiting"
     vendors["HKG Catereres"]["color"] = "orange"
     events["Birthday"]["vendors"] = vendors
-    return render_template('manage_events.html',name = session['name'])
+    # return render_template('manage_events.html',name = session['name'])
     if 'name' in session:
-        return render_template('manage_events.html',name = session['name']events = events)
+        return render_template('manage_events.html',name = session['name'],events = events)
     return redirect(url_for('index'))
 
 @app.route('/create')
