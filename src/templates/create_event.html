@@ -21,7 +21,7 @@
       </script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet">
-<link href="css/create_event.css" rel="stylesheet">
+<link href="{{ url_for('static', filename = 'css/create_event.css') }}" rel="stylesheet">
 
 <body>
 
@@ -197,7 +197,7 @@
     <span class="step"></span>
   </div>
 </form>
-<script type="text/javascript" src="js/create_event.js"></script>
+<script type="text/javascript" src="{{ url_for('static', filename = 'js/create_event.js') }}"></script>
 
  <!-- JQuery -->
  <script type="text/javascript" src="{{ url_for('static',filename = 'js/jquery-3.3.1.min.js')}}"></script>

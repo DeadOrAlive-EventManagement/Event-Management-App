@@ -1,13 +1,13 @@
-# Decide wheter to use SQLAlchemy (ORM) or MySQLdb (Might have to use a fork, MySQLDb does not have good python3 support) 
+# Decide whether to use SQLAlchemy (ORM) or MySQLdb (Might have to use a fork, MySQLDb does not have good python3 support) 
 # For now going with pymysql as it is good enough and very similar to MySQLdb
 # Please follow the following naming convention: long_function_name(var_one,var_two)
-from flask import Flask,flash,session, render_template, request, redirect, Response ,jsonify, json, url_for
+from flask import Flask, flash,session, render_template, request, redirect, Response ,jsonify, json, url_for
 from werkzeug.security import generate_password_hash, check_password_hash
 import pymysql
 
 app = Flask(__name__)
 app.secret_key = 'totally a secret lolz'
-db = pymysql.connect("localhost","root","","SE_Project",charset='utf8')
+db = pymysql.connect("localhost", "root", "", "SE_Project")
 cursor = db.cursor()
 
 
@@ -15,12 +15,13 @@ cursor = db.cursor()
 def index():
     '''This function renders the index page of the EventManagement site'''
     return render_template('index.html')
+
 @app.route('/checkemail',methods = ['POST','GET'])
 def check_email():
     '''This function checks if the email is already in the database, i.e., already registered'''
-    print("form is ",request.form)
+    print("form is ", request.form)
+    print("json is ", request.json)
 
-    print("json is ",request.json)
     email = request.form['email']
     sql = """SELECT * FROM Customer WHERE email=%s"""
     args =([email])
@@ -117,7 +118,7 @@ def signin():
 
 @app.route('/home')
 def home():
-    '''This funnction shows the user the homepage. Username will be displayed top right, 
+    '''This function shows the user the homepage. Username will be displayed top right, 
     and all current events will be displayed on the page, dynamically.'''
     # use render templeate functionality to automatically add name and other data 
     #test data

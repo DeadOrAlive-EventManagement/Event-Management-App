@@ -1,3 +1,4 @@
+<style>
 * {
   box-sizing: border-box;
 }
@@ -75,3 +76,4 @@ button:hover {
 .step.finish {
   background-color: #4CAF50;
 }
+</style>

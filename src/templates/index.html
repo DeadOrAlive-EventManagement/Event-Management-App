@@ -66,8 +66,6 @@
 <main>
 <!--Main container-->
 <div class="container mb-4">
-    
-
     <!--Grid row-->
     <div class="mt-5 row">
         <!--Grid column-->
@@ -132,7 +130,7 @@
             </div>
 
             <!-- Sign in button -->
-            <button class="btn btn-info btn-block my-4" type="submit">Sign in</button>
+            <button class="btn btn-info btn-block my-4" type="submit" onclick="obj.checkPassword()">Sign in</button>
 
             <!-- Register -->
             <p>Not a member?
@@ -161,9 +159,6 @@
     </div>
     <!--Grid row-->
 
-
-  
-
 </div>
 
 <!--Main container-->
@@ -188,91 +183,87 @@
 
   <script>
         obj = {
-         stopSubmission: function() {
+          stopSubmission: function() {
               'use strict';
-              window.addEventListener('load', function() {
-              // Fetch all the forms we want to apply custom Bootstrap validation styles to
-              var forms = document.getElementsByClassName('needs-validation');
-              // Loop over them and prevent submission
-              var validation = Array.prototype.filter.call(forms, function(form) {
-              form.addEventListener('submit', function(event) {
-                  if (form.checkValidity() === false) {
-                      event.preventDefault();
-                      event.stopPropagation();
-                  }
-                  form.classList.add('was-validated');
-              }, false);
-              });
-          }, false);
+              window.addEventListener(
+                'load',
+                function() {
+                  // Fetch all the forms we want to apply custom Bootstrap validation styles to
+                  var forms = document.getElementsByClassName('needs-validation');
+                  // Loop over them and prevent submission
+                  var validation = Array.prototype.filter.call(
+                    forms, 
+                    function(form) {
+                      form.addEventListener('submit', function(event) {
+                          if (form.checkValidity() === false) {
+                              event.preventDefault();
+                              event.stopPropagation();
+                          }
+                          form.classList.add('was-validated');
+                      }, 
+                    false);
+                });
+                }, 
+                false);
           },
-        checkEmail: function()
-        {
-          emailElement = $('#defaultLoginFormEmail');
-          val = emailElement.val()
-          data = {"email" : val}
-          console.log(data)
-          $.post("checkemail",data,function(result){
-              emailElement = $('#defaultLoginFormEmail')[0]
-              console.log("result is " + result)
-              myForm = $("#SignIn")
-              if(result == "False")
-              {
-                  emailElement.setCustomValidity('')
-                //   $('#invalidEmail').html("This email is already taken. If this is yours, please sign in.")
-              }
-              else if(emailElement.value == '')
-              {
-                  emailElement.setCustomValidity('Please provide an email id')
-                  $('#invalidEmail').html("Please provide an email id.")
-                //   myForm.find(':submit').click();
-              }
-              else
-              {
-                  emailElement.setCustomValidity('Could not find this email ID. Please register.')
-                  $('#invalidEmail').html("Could not find this email ID. Please register.")
-                //   myForm.find(':submit').click();
-              }
-             
-          })
-      },
-      checkPassword: function()
-      {
-          pwd = $("#defaultLoginFormPassword");
-          emailElement = $('#defaultLoginFormEmail');
-          data = {"email": emailElement.val(),"pwd": pwd.val()}
-          if(pwd.val() == '')
-          {
-                pwd[0].setCustomValidity('Please enter your Password')
-                $('#invalidPwd').html("Please enter your Password")
-                $("#SignIn").find(':submit').click();
-                console.log("Empty")
-                return 
-          }
-          $.post("dosignin",data,function(result){
-            pwd = $("#defaultLoginFormPassword");
-            if(result == "False")
-            {
-                
-                pwd[0].setCustomValidity('Invalid Password')
-                $('#invalidPwd').html("Invalid Password")
-                $("#SignIn").find(':submit').click();
-                console.log("In here")
-                // $("#SignIn").find(':submit').click();
-            }
-            else if(pwd.val() == '')
-            {
-                pwd[0].setCustomValidity('Please enter your Password')
-                $('#invalidPwd').html("Please enter your Password")
-                // $("#SignIn").find(':submit').click();
-            }
-            else
-            {
-                pwd[0].setCustomValidity('')
-            }
 
-          })
-      }
-        }
+          checkEmail: function() {
+            emailElement = $('#defaultLoginFormEmail');
+            val = emailElement.val();
+            data = {"email" : val};
+            console.log(data)
+            $.post("checkemail",data,function(result){
+                emailElement = $('#defaultLoginFormEmail')[0]
+                console.log("result is " + result);
+                myForm = $("#SignIn");
+                if(result == "False") {
+                    emailElement.setCustomValidity('')
+                  //   $('#invalidEmail').html("This email is already taken. If this is yours, please sign in.")
+                } else if(emailElement.value == '') {
+                    emailElement.setCustomValidity('Please provide an email id');
+                    $('#invalidEmail').html("Please provide an email id.");
+                  //   myForm.find(':submit').click();
+                } else {
+                    emailElement.setCustomValidity('Could not find this email ID. Please register.');
+                    $('#invalidEmail').html("Could not find this email ID. Please register.");
+                  //   myForm.find(':submit').click();
+                }               
+            })
+          },
+
+          checkPassword: function()
+          {
+              pwd = $("#defaultLoginFormPassword");
+              emailElement = $('#defaultLoginFormEmail');
+              data = {"email": emailElement.val(),"pwd": pwd.val()}
+              if(pwd.val() == '')
+              {
+                    pwd[0].setCustomValidity('Please enter your Password');
+                    $('#invalidPwd').html("Please enter your Password");
+                    $("#SignIn").find(':submit').click();
+                    console.log("Empty");
+                    return 
+              }
+              $.post("dosignin",data,function(result){
+                pwd = $("#defaultLoginFormPassword");
+                if(result == "False") {
+                    pwd[0].setCustomValidity('Invalid Password');
+                    $('#invalidPwd').html("Invalid Password");
+
+                    $("#SignIn").find(':submit').click();
+                    console.log("In here");
+                    // $("#SignIn").find(':submit').click();
+                } else if(pwd.val() == '') {
+                    pwd[0].setCustomValidity('Please enter your Password');
+                    $('#invalidPwd').html("Please enter your Password");
+                    // $("#SignIn").find(':submit').click();
+                } else {
+                    pwd[0].setCustomValidity('');
+                }
+              })
+          }
+        };
+        
         obj.stopSubmission();
     </script>
 </body>
