@@ -139,8 +139,10 @@
 
           <tbody>
             <tr>
-              <td>Catering</td>
-              <td>Some info here</td>
+            {% for service, details in services.items()%}
+              <td>{{ service }}</td>
+              <td>{{ details["description"] }}</td>
+              <td>{{ details["price"] }}</td>
               <td><button type="button" class="btn btn-outline-primary btn-sm m-0 waves-effect">Remove</button></td>
             </tr>
           </tbody>

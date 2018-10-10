@@ -130,7 +130,7 @@
             </div>
 
             <!-- Sign in button -->
-            <button class="btn btn-info btn-block my-4" type="submit" onclick="obj.checkPassword()">Sign in</button>
+            <button class="btn btn-info btn-block my-4" type="submit" >Sign in</button>
 
             <!-- Register -->
             <p>Not a member?
@@ -245,19 +245,22 @@
                     return 
               }
               $.post("dosignin",data,function(result){
+                console.log(result)
                 pwd = $("#defaultLoginFormPassword");
                 if(result == "False") {
                     pwd[0].setCustomValidity('Invalid Password');
                     $('#invalidPwd').html("Invalid Password");
 
-                    $("#SignIn").find(':submit').click();
+                    // $("#SignIn").find(':submit').click();
                     console.log("In here");
                     // $("#SignIn").find(':submit').click();
-                } else if(pwd.val() == '') {
+                } 
+                else if(pwd.val() == '') {
                     pwd[0].setCustomValidity('Please enter your Password');
                     $('#invalidPwd').html("Please enter your Password");
                     // $("#SignIn").find(':submit').click();
-                } else {
+                } 
+                else {
                     pwd[0].setCustomValidity('');
                 }
               })

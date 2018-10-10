@@ -52,9 +52,14 @@
           </li>
       </ul>
       <!-- Links -->
-      <span class="navbar-text white-text">
-        Welcome, {{name}}!
-      </span>
+
+      <div class="nav-item dropdown">
+        <button class="btn btn-primary dropdown-toggle" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true"
+          aria-expanded="false" type="button" onclick = >Hi, {{ name }}!</button>
+        <div class="dropdown-menu dropdown-primary" aria-labelledby="navbarDropdownMenuLink">
+          <a class="dropdown-item" href = "/logout">Log Out</a>
+        </div>
+      </div>
   </div>
   <!-- Collapsible content -->
 
@@ -143,5 +148,14 @@
   <script type="text/javascript" src="{{ url_for('static',filename = 'js/bootstrap.min.js')}}"></script>
   <!-- MDB core JavaScript -->
   <script type="text/javascript" src="{{ url_for('static',filename = 'js/mdb.min.js')}}"></script>
+
+  <script>
+    logout = {
+      logout: function()
+      {
+        $.post("/logout")
+      }
+    }
+  </script>
 </body>
 </html>
