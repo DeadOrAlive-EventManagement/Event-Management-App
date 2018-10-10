@@ -108,7 +108,7 @@ def do_sigin():
 
     if(results):
         row = results[0]
-        print(row)
+
         if(check_password_hash(row[2],pwd)):
             # do session stuff
             session.clear()
@@ -129,7 +129,7 @@ def do_sigin():
 def signin():
     '''Redirects to correct page if session values are set
     This is because password checking is done as part of form validation'''
-    print("WHY THE FUCK HAVE YOU COME HERE")
+
     if('customer_id' in session):
         return redirect(url_for('home'))
     return redirect(url_for('index'))
