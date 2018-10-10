@@ -28,6 +28,7 @@ CREATE TABLE Events (
   budget int(11) NOT NULL,
   num_people int(11) DEFAULT NULL,
   date_event date DEFAULT NULL,
+  details varchar(500) DEFAULT NULL,
   FOREIGN KEY (customer_id) REFERENCES Customer(customer_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 

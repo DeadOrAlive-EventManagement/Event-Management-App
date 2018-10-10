@@ -182,8 +182,8 @@ def home():
             # Scheduled data for the event
             events[event_name]["date"] = row[5]
 
-            # TODO(JyothsnaKS) :  Add event description to database and update this.
-            events[event_name]["description"] = "TODO: Yet to add"
+            # Event description for the events
+            events[event_name]["description"] = row[6]
             
             sql = "SELECT booking_status,vendor_name,service_type from bookings cross join vendor,services where bookings.vendor_id=vendor.vendor_id and vendor.vendor_id=services.vendor_id and bookings.service_id=services.service_id and event_id=%s"
             args = ([row[0]])

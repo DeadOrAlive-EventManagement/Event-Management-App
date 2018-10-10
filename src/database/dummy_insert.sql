@@ -20,9 +20,9 @@ INSERT INTO Services (vendor_id, service_id, service_name, price_per_unit, servi
 (1, 1, 'Lunch Food', '30', 'Catering'),
 (2, 1, 'Venue for organising small functions', '50', 'Venue');
 
-INSERT INTO Events (event_name, customer_id, budget, num_people, date_event) VALUES
-('Birthday', 1, 10000, 20, '2018-10-31'),
-('Custom Event', 1, 50000, 50, '2018-11-06');
+INSERT INTO Events (event_name, customer_id, budget, num_people, date_event, details) VALUES
+('Birthday', 1, 10000, 20, '2018-10-31', 'Birthday party for Ashley'),
+('Custom Event', 1, 50000, 50, '2018-11-06', 'Farewell lunch for Mike');
 
 INSERT INTO Bookings (event_id, vendor_id, customer_id, service_id, booking_status) VALUES
 (1, 1, 1, 1, FALSE),
