@@ -55,7 +55,7 @@ CREATE TABLE Bookings (
   vendor_id int(11),
   customer_id int(11),
   service_id int(11),
-  booking_status varchar(50) DEFAULT FALSE,
+  booking_status boolean DEFAULT FALSE,
   FOREIGN KEY (event_id) REFERENCES Events(event_id),
   FOREIGN KEY (customer_id) REFERENCES Customer(customer_id),
   FOREIGN KEY (vendor_id, service_id) REFERENCES Services(vendor_id, service_id),
