@@ -157,7 +157,7 @@ def home():
     # vendors["HKG Catereres"]["status"] = "Waiting"
     # vendors["HKG Catereres"]["color"] = "orange"
     # events["Birthday"]["vendors"] = vendors
-    print('home')
+
     if 'name' in session:
         # Query to get all events created by a customer
         sql = "SELECT * FROM Events where customer_id=%s"
@@ -285,5 +285,6 @@ def cancelevent():
     return redirect(url_for('index'))
 
 if __name__ == '__main__':
-	# run!
-	app.run(debug=True)
+    # run!
+    app.run(debug=True)
+
