@@ -1,0 +1,9 @@
+1) Logout  
+2) Create Event - Put correct navbar etc 
+3) Look at making common navbar a la php 
+4) Register form should have vendor or customer
+5) Make manage_service template
+6) Vendor Manage Events (Accept and reject customers)
+7) Test deletes on database (loads of foreign key nonsense)
+8) Connect create_event and database 
+

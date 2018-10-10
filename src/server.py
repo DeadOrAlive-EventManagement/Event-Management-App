@@ -7,11 +7,17 @@ import pymysql
 
 app = Flask(__name__)
 app.secret_key = 'totally a secret lolz'
+# db = pymysql.connect("localhost", "root", "root", "SE_Project")
 db = pymysql.connect("localhost", "root", "", "SE_Project", charset="latin1")
+cursor = db.cursor()
+
+
 
 @app.route('/')
 def index():
     '''This function renders the index page of the EventManagement site'''
+    if 'customer_id' in session:
+        return redirect(url_for("home"))
     return render_template('index.html')
 
 @app.route('/checkemail',methods = ['POST','GET'])
@@ -42,6 +48,8 @@ def do_register():
     email = request.form['loginEmail']
     number = request.form['registerPh']
     pwd = request.form['loginPwd']
+    vendor = request.form.get('vendor',False)
+    print(vendor)
     hashed_pwd = generate_password_hash(pwd)
 
     #check if the user already exists 
@@ -89,7 +97,6 @@ def do_sigin():
     #get values
     email = request.form["email"]
     pwd = request.form["pwd"]
-
     #do the check
     sql = "SELECT customer_id,first_name,pwd from Customer where email = %s"
     args = ([email])
@@ -104,15 +111,15 @@ def do_sigin():
         print(row)
         if(check_password_hash(row[2],pwd)):
             # do session stuff
-            print("Login succesfull!")
             session.clear()
             session['customer_id'] = row[0]
             session['name'] = row[1]
+            print("IN do_signin login")
             return "True"
             # return redirect(url_for('home'))
         else:
             # wrong password, tell user 
-            # print("Forgot password!")
+            print("Forgot password!")
             session.clear()
             return "False"
             # return redirect(url_for('index'))
@@ -122,6 +129,7 @@ def do_sigin():
 def signin():
     '''Redirects to correct page if session values are set
     This is because password checking is done as part of form validation'''
+    print("WHY THE FUCK HAVE YOU COME HERE")
     if('customer_id' in session):
         return redirect(url_for('home'))
     return redirect(url_for('index'))
@@ -243,10 +251,18 @@ def contacted():
         return render_template('contacted.html',name = session['name'])
     return render_template('contacted.html',name = "")
 
-@app.route('/logout')
+@app.route('/logout', methods=['POST','GET'])
 def logout():
     session.clear()
-    redirect(url_for('index'))
+    return redirect(url_for('index'))
+
+@app.route("/services")
+def services():
+    services = dict()
+    services["catering"] = dict()
+    services["catering"]["description"] = "Some info here"
+    services["catering"]["price"] = "1000$"
+    return render_template("manage_services.html",services = services)
 
 if __name__ == '__main__':
 	# run!
