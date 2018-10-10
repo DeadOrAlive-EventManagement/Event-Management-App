@@ -101,6 +101,7 @@ def do_sigin():
 
     if(results):
         row = results[0]
+        print(row)
         if(check_password_hash(row[2],pwd)):
             # do session stuff
             print("Login succesfull!")
@@ -128,11 +129,11 @@ def signin():
 
 @app.route('/home')
 def home():
-    # This function shows the user the homepage. Username will be displayed top right, 
+    # This function shows the user the homepage for a customer. Username will be displayed top right, 
     # and all current events will be displayed on the page, dynamically.
-    # use render template functionality to automatically add name and other data 
-    # test data
-    # Sample dictionary returned:
+    # Use render template functionality to automatically add name and other data
+
+    # Sample dictionary template returned:
     # events = dict()
     # events["Birthday"] = dict()
     # events["Birthday"]["description"] = "Birthday Party for Ashley"
@@ -150,7 +151,69 @@ def home():
     # events["Birthday"]["vendors"] = vendors
 
     if 'name' in session:
-        return render_template('manage_events.html',name = session['name'], events = events)
+        # Query to get all events created by a customer
+        sql = "SELECT * FROM Events where customer_id=%s"
+        args = ([session['customer_id']])
+
+        # Executing the query
+        cursor = db.cursor()
+        cursor.execute(sql,args)
+        results = cursor.fetchall()
+        cursor.close()
+
+        # Dictionary returned by this function which will hold the event related information for a customer
+        events =  dict()
+
+        # Collect event related information for a customer and store it as metadata temporarily
+        for row in results:
+            event_name = row[1]
+            events[event_name] = dict()
+            events[event_name]["meta"] = row
+
+        # For every event created by customer extract information - service type, vendor name and booking status
+        # by a cross join of bookings, vendor and services table
+        for event in events:
+            row = events[event]["meta"]
+
+            # TODO(JyothsnaKS): Replace this event id to ensure uniqueness
+            event_name = row[1]
+            # Uniquely identifies all events
+            events[event_name]["eventid"] = row[0]
+            # Scheduled data for the event
+            events[event_name]["date"] = row[5]
+
+            # TODO(JyothsnaKS) :  Add event description to database and update this.
+            events[event_name]["description"] = "TODO: Yet to add"
+            
+            sql = "SELECT booking_status,vendor_name,service_type from bookings cross join vendor,services where bookings.vendor_id=vendor.vendor_id and vendor.vendor_id=services.vendor_id and bookings.service_id=services.service_id and event_id=%s"
+            args = ([row[0]])
+
+            cursor = db.cursor()
+            cursor.execute(sql,args)
+            results = cursor.fetchall()
+            cursor.close()
+            vendors = dict()
+
+            # Added vendors and service information for a specific event to a dictionary
+            for subrow in results:
+                vendor_name = subrow[1]
+                vendors[vendor_name] = dict()
+                vendors[vendor_name]["service"] = subrow[2]
+
+                # 1 is for True when the vendor has confirmed service for an event
+                if subrow[0] == 1: 
+                    vendors[vendor_name]["status"] = "Confirmed"
+                    vendors[vendor_name]["color"] = "green"
+                else:
+                    vendors[vendor_name]["status"] = "Waiting"
+                    vendors[vendor_name]["color"] = "orange"
+
+            events[event_name]["vendors"] = vendors
+
+            # Delete the metadata gathered earlier as this is no longer required
+            del events[event_name]["meta"]
+
+        return render_template('manage_events.html', name = session['name'], events = events)
     return redirect(url_for('index'))
 
 @app.route('/create')
