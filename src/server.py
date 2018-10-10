@@ -7,7 +7,8 @@ import pymysql
 
 app = Flask(__name__)
 app.secret_key = 'totally a secret lolz'
-db = pymysql.connect("localhost", "root", "root", "SE_Project")
+# db = pymysql.connect("localhost", "root", "root", "SE_Project")
+db = pymysql.connect("localhost", "root", "", "SE_Project")
 cursor = db.cursor()
 
 
@@ -42,6 +43,8 @@ def do_register():
     email = request.form['loginEmail']
     number = request.form['registerPh']
     pwd = request.form['loginPwd']
+    vendor = request.form.get('vendor',False)
+    print(vendor)
     hashed_pwd = generate_password_hash(pwd)
 
     #check if the user already exists 

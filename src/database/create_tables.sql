@@ -17,7 +17,7 @@ CREATE TABLE Customer (
   first_name varchar(20) NOT NULL,
   middle_name varchar(20) DEFAULT NULL,
   last_name varchar(20) NOT NULL,
-  phone_number char(10) DEFAULT 0000000000,
+  phone_number varchar(13) DEFAULT 0000000000,
   pwd varchar(100) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 

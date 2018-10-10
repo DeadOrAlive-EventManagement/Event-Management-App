@@ -1,73 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta http-equiv="x-ua-compatible" content="ie=edge">
-  <title>Event Manager</title>
-  <!-- For final deployment, change url_for to CDN urls -->
-  <!-- Font Awesome -->
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-  <!-- Bootstrap core CSS -->
-  <link href= "{{ url_for('static',filename = 'css/bootstrap.min.css')}}" rel="stylesheet">
-  <!-- Material Design Bootstrap -->
-  <link href="{{ url_for('static',filename = 'css/mdb.min.css')}}" rel="stylesheet">
-  <!-- Your custom styles (optional) -->
-  <link href="{{ url_for('static',filename = 'css/style.css')}}" rel="stylesheet">
-</head>
-
-<body>
-<!--Main Navigation-->
-<header>
-<!--Navbar-->
-<!--use sticky top instead of fixed, fixed may cause resising issues-->
-<nav class="navbar navbar-expand-lg navbar-dark primary-color sticky-top">
-
-  <!-- Navbar brand -->
-  <a class="navbar-brand" href="#">Event Manager</a>
-
-  <!-- Collapse button -->
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#basicExampleNav" aria-controls="basicExampleNav"
-      aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-  </button>
-
-  <!-- Collapsible content -->
-  <div class="collapse navbar-collapse" id="basicExampleNav">
-
-      <!-- Links -->
-      <ul class="navbar-nav mr-auto">
-          <li class="nav-item">
-              <a class="nav-link" href="/home">Home
-              </a>
-          </li>
-          <li class="nav-item">
-              <a class="nav-link" href="/create">Create Event</a>
-          </li>
-          <li class="nav-item">
-              <a class="nav-link" href="#">Help</a>
-          </li>
-          <li class="nav-item">
-              <a class="nav-link" href="/contact">Contact Us</a>
-          </li>
-      </ul>
-
-      
-             
-
-      <!-- Links -->
-  </div>
-  <!-- Collapsible content -->
-
-</nav>
-<!--/.Navbar-->
-</header>
-<!--Main Navigation-->
-
-<!--Main layout-->
-<main>
-<!--Main container-->
+{% extends "base.html" %}
+{% block nav %}{% endblock %}
+{% block main %}
 <div class="container">
     <!--Grid row-->
     <div class="mt-5 row">
@@ -96,25 +29,4 @@
         <!--Grid row-->
     <!--Grid row-->  
 </div>
-
-<!--Main container-->
-</main>
-<!--Main layout-->
-
-<!--Footer-->
-<footer>
-
-</footer>
-<!--Footer-->
-
-  <!-- SCRIPTS -->
-  <!-- JQuery -->
-  <script type="text/javascript" src="{{ url_for('static',filename = 'js/jquery-3.3.1.min.js')}}"></script>
-  <!-- Bootstrap tooltips -->
-  <script type="text/javascript" src="{{ url_for('static',filename = 'js/popper.min.js')}}"></script>
-  <!-- Bootstrap core JavaScript -->
-  <script type="text/javascript" src="{{ url_for('static',filename = 'js/bootstrap.min.js')}}"></script>
-  <!-- MDB core JavaScript -->
-  <script type="text/javascript" src="{{ url_for('static',filename = 'js/mdb.min.js')}}"></script>
-</body>
-</html>
+{% endblock %}
