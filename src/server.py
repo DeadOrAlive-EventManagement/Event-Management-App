@@ -7,7 +7,7 @@ import pymysql
 
 app = Flask(__name__)
 app.secret_key = 'totally a secret lolz'
-db = pymysql.connect("localhost", "root", "", "SE_Project")
+db = pymysql.connect("localhost", "root", "root", "SE_Project")
 cursor = db.cursor()
 
 
@@ -125,6 +125,7 @@ def home():
     events = dict()
     events["Birthday"] = dict()
     events["Birthday"]["description"] = "Birthday Party for Ashley"
+    events["Birthday"]["eventid"] = 1
     events["Birthday"]["date"] = "06-08-2018"
     vendors = dict()
     vendors["Ivy Park Venue"] = dict()
@@ -136,6 +137,22 @@ def home():
     vendors["HKG Catereres"]["status"] = "Waiting"
     vendors["HKG Catereres"]["color"] = "orange"
     events["Birthday"]["vendors"] = vendors
+
+    events["Custom Event"] = dict()
+    events["Custom Event"]["description"] = "Custom event for Mike"
+    events["Custom Event"]["eventid"] = 2
+    events["Custom Event"]["date"] = "06-10-2018"
+    vendors = dict()
+    vendors["Ivy Park Venue"] = dict()
+    vendors["Ivy Park Venue"]["service"] = "Venue"
+    vendors["Ivy Park Venue"]["status"] = "Confirmed"
+    vendors["Ivy Park Venue"]["color"] = "green"
+    vendors["HKG Catereres"] = dict()
+    vendors["HKG Catereres"]["service"] = "Caterer"
+    vendors["HKG Catereres"]["status"] = "Waiting"
+    vendors["HKG Catereres"]["color"] = "orange"
+    events["Custom Event"]["vendors"] = vendors
+
     # return render_template('manage_events.html',name = session['name'])
     if 'name' in session:
         return render_template('manage_events.html',name = session['name'],events = events)
