@@ -9,8 +9,8 @@ TRUNCATE Bookings;
 SET FOREIGN_KEY_CHECKS = 1;
 
 INSERT INTO Customer ( email, first_name, middle_name, last_name, phone_number, pwd) VALUES
-('mike@gmail.com', 'Mike', NULL, 'Jordan', '9658741230', 'mike'),
-('ashley@gmail.com', 'Ashley', NULL, 'Park', '6758942536', 'ashley');
+('mike@gmail.com', 'Mike', NULL, 'Jordan', '9658741230', 'pbkdf2:sha256:50000$jZzQwZ4G$f304ef7f56c9ff9788f207aed6147d831ed0a397bdcfe33f3c4b110dd9c2eed6'),
+('ashley@gmail.com', 'Ashley', NULL, 'Park', '6758942536', 'pbkdf2:sha256:50000$fk1LDC2U$eae508e5b5722ad49e5418885a611c8044f259fa328734c0c9f45d94853117e3');
 
 INSERT INTO Vendor (vendor_name, vendor_location, email, phone_number, pwd) VALUES
 ('HKG Caterers', 'Bangalore', 'hkg@gmail.com', '8968765009', 'hkg'),
