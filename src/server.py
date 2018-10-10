@@ -8,8 +8,9 @@ import pymysql
 app = Flask(__name__)
 app.secret_key = 'totally a secret lolz'
 # db = pymysql.connect("localhost", "root", "root", "SE_Project")
-db = pymysql.connect("localhost", "root", "", "SE_Project")
+db = pymysql.connect("localhost", "root", "", "SE_Project", charset="latin1")
 cursor = db.cursor()
+
 
 
 @app.route('/')
@@ -28,8 +29,12 @@ def check_email():
     email = request.form['email']
     sql = """SELECT * FROM Customer WHERE email=%s"""
     args =([email])
+
+    cursor = db.cursor()
     cursor.execute(sql,args)
     results = cursor.fetchall()
+    cursor.close()
+
     if(results):
         return "False"
     return "True"
@@ -50,8 +55,11 @@ def do_register():
     #check if the user already exists 
     sql = """SELECT * FROM Customer WHERE email=%s"""
     args =([email])
+    cursor = db.cursor()
     cursor.execute(sql,args)
     results = cursor.fetchall()
+    cursor.close()
+
     if(results):
         #Do appropriate error handling
         return redirect(url_for('index'))
@@ -63,8 +71,10 @@ def do_register():
             args = (email,names[0],None,names[1],number,hashed_pwd)
         else:
             args = (email,names[0],names[1],names[2],number,hashed_pwd)
+        cursor = db.cursor()
         cursor.execute(sql,args)
         db.commit()
+        cursor.close()
     # Using the redirect function because then the "/registered endpoint will show up, which makes more sense to user"
     return redirect(url_for('registered'))
 
@@ -91,8 +101,11 @@ def do_sigin():
     sql = "SELECT customer_id,first_name,pwd from Customer where email = %s"
     args = ([email])
 
+    cursor = db.cursor()
     cursor.execute(sql,args)
     results = cursor.fetchall()
+    cursor.close()
+
     if(results):
         row = results[0]
         if(check_password_hash(row[2],pwd)):
@@ -123,44 +136,29 @@ def signin():
 
 @app.route('/home')
 def home():
-    '''This function shows the user the homepage. Username will be displayed top right, 
-    and all current events will be displayed on the page, dynamically.'''
-    # use render templeate functionality to automatically add name and other data 
-    #test data
-    events = dict()
-    events["Birthday"] = dict()
-    events["Birthday"]["description"] = "Birthday Party for Ashley"
-    events["Birthday"]["eventid"] = 1
-    events["Birthday"]["date"] = "06-08-2018"
-    vendors = dict()
-    vendors["Ivy Park Venue"] = dict()
-    vendors["Ivy Park Venue"]["service"] = "Venue"
-    vendors["Ivy Park Venue"]["status"] = "Confirmed"
-    vendors["Ivy Park Venue"]["color"] = "green"
-    vendors["HKG Catereres"] = dict()
-    vendors["HKG Catereres"]["service"] = "Caterer"
-    vendors["HKG Catereres"]["status"] = "Waiting"
-    vendors["HKG Catereres"]["color"] = "orange"
-    events["Birthday"]["vendors"] = vendors
+    # This function shows the user the homepage. Username will be displayed top right, 
+    # and all current events will be displayed on the page, dynamically.
+    # use render template functionality to automatically add name and other data 
+    # test data
+    # Sample dictionary returned:
+    # events = dict()
+    # events["Birthday"] = dict()
+    # events["Birthday"]["description"] = "Birthday Party for Ashley"
+    # events["Birthday"]["eventid"] = 1
+    # events["Birthday"]["date"] = "06-08-2018"
+    # vendors = dict()
+    # vendors["Ivy Park Venue"] = dict()
+    # vendors["Ivy Park Venue"]["service"] = "Venue"
+    # vendors["Ivy Park Venue"]["status"] = "Confirmed"
+    # vendors["Ivy Park Venue"]["color"] = "green"
+    # vendors["HKG Catereres"] = dict()
+    # vendors["HKG Catereres"]["service"] = "Caterer"
+    # vendors["HKG Catereres"]["status"] = "Waiting"
+    # vendors["HKG Catereres"]["color"] = "orange"
+    # events["Birthday"]["vendors"] = vendors
 
-    events["Custom Event"] = dict()
-    events["Custom Event"]["description"] = "Custom event for Mike"
-    events["Custom Event"]["eventid"] = 2
-    events["Custom Event"]["date"] = "06-10-2018"
-    vendors = dict()
-    vendors["Ivy Park Venue"] = dict()
-    vendors["Ivy Park Venue"]["service"] = "Venue"
-    vendors["Ivy Park Venue"]["status"] = "Confirmed"
-    vendors["Ivy Park Venue"]["color"] = "green"
-    vendors["HKG Catereres"] = dict()
-    vendors["HKG Catereres"]["service"] = "Caterer"
-    vendors["HKG Catereres"]["status"] = "Waiting"
-    vendors["HKG Catereres"]["color"] = "orange"
-    events["Custom Event"]["vendors"] = vendors
-
-    # return render_template('manage_events.html',name = session['name'])
     if 'name' in session:
-        return render_template('manage_events.html',name = session['name'],events = events)
+        return render_template('manage_events.html',name = session['name'], events = events)
     return redirect(url_for('index'))
 
 @app.route('/create')
