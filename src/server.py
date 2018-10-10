@@ -157,7 +157,7 @@ def home():
     # vendors["HKG Catereres"]["status"] = "Waiting"
     # vendors["HKG Catereres"]["color"] = "orange"
     # events["Birthday"]["vendors"] = vendors
-
+    print('home')
     if 'name' in session:
         # Query to get all events created by a customer
         sql = "SELECT * FROM Events where customer_id=%s"
@@ -263,6 +263,26 @@ def services():
     services["catering"]["description"] = "Some info here"
     services["catering"]["price"] = "1000$"
     return render_template("manage_services.html",services = services)
+
+@app.route("/cancelevent", methods=['POST'])
+def cancelevent():
+    print('cancelevent', request.form['eventid'])
+
+    cursor = db.cursor()
+    sql = "DELETE from bookings where event_id=%s"
+    args = ([request.form['eventid']])
+    cursor.execute(sql, args)
+    db.commit()
+    sql = "DELETE from events where event_id=%s"
+    args = ([request.form['eventid']])
+    cursor.execute(sql, args)
+    db.commit()
+    cursor.close()
+    
+    # TODO(JyothsnaKS): Need to fix the URL redirect
+    if 'name' in session:
+        return redirect(url_for('home'))
+    return redirect(url_for('index'))
 
 if __name__ == '__main__':
 	# run!
