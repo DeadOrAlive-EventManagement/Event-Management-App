@@ -1,4 +1,4 @@
-# Decide whether to use SQLAlchemy (ORM) or MySQLdb (Might have to use a fork, MySQLDb does not have good python3 support)
+# Decide whether to use SQLAlchemy (ORM) or MySQLdb (Might have to use a fork, MySQLDb does not have good python3 support) 
 # For now going with pymysql as it is good enough and very similar to MySQLdb
 # Please follow the following naming convention: long_function_name(var_one,var_two)
 from flask import Flask, flash,session, render_template, request, redirect, Response ,jsonify, json, url_for
@@ -7,7 +7,7 @@ import pymysql
 
 app = Flask(__name__)
 app.secret_key = 'totally a secret lolz'
-db = pymysql.connect("localhost", "root", "", "SE_Project")
+db = pymysql.connect("localhost", "root", "root", "SE_Project", charset='utf8')
 cursor = db.cursor()
 
 
@@ -33,16 +33,20 @@ def check_email():
 
 @app.route('/doregister',methods = ['POST'])
 def do_register():
+    print("TEST")
     '''This function enters user details into the database, then shows the "You have registered! page'''
     #Get the values from the post form. Use generate_hash before saving for security reasons.
-    name = request.form['registerName']
+    name = request.form['registerName'] 
     names = name.split()
     email = request.form['loginEmail']
     number = request.form['registerPh']
     pwd = request.form['loginPwd']
+    vendor = request.form.get('vendir',False)
     hashed_pwd = generate_password_hash(pwd)
 
-    #check if the user already exists
+    print(vendor)
+
+    #check if the user already exists 
     sql = """SELECT * FROM Customer WHERE email=%s"""
     args =([email])
     cursor.execute(sql,args)
@@ -100,7 +104,7 @@ def do_sigin():
             return "True"
             # return redirect(url_for('home'))
         else:
-            # wrong password, tell user
+            # wrong password, tell user 
             # print("Forgot password!")
             session.clear()
             return "False"
@@ -118,14 +122,13 @@ def signin():
 
 @app.route('/home')
 def home():
-    '''This function shows the user the homepage. Username will be displayed top right,
+    '''This function shows the user the homepage. Username will be displayed top right, 
     and all current events will be displayed on the page, dynamically.'''
-    # use render templeate functionality to automatically add name and other data
+    # use render templeate functionality to automatically add name and other data 
     #test data
     events = dict()
     events["Birthday"] = dict()
     events["Birthday"]["description"] = "Birthday Party for Ashley"
-    events["Birthday"]["date"] = "06-08-2018"
     vendors = dict()
     vendors["Ivy Park Venue"] = dict()
     vendors["Ivy Park Venue"]["service"] = "Venue"
@@ -136,34 +139,34 @@ def home():
     vendors["HKG Catereres"]["status"] = "Waiting"
     vendors["HKG Catereres"]["color"] = "orange"
     events["Birthday"]["vendors"] = vendors
-    # return render_template('manage_events.html',name = session['name'])
+    return render_template('manage_events.html', name = session['name'], events = events)
     if 'name' in session:
-        return render_template('manage_events.html',name = session['name'],events = events)
+        return render_template('manage_events.html', name = session['name'], events = events)
     return redirect(url_for('index'))
 
 @app.route('/create')
 def create():
-    '''This funnction shows the user the create event page. Username will be displayed top right,
+    '''This funnction shows the user the create event page. Username will be displayed top right, 
     and all current events will be displayed on the page, dynamically.'''
-    # use render templeate functionality to automatically add name and other data
+    # use render templeate functionality to automatically add name and other data 
     if 'name' in session:
         return render_template('create_event.html',name = session['name'])
     return redirect(url_for('index'))
 
 @app.route('/contact')
 def contact():
-    '''This funnction shows the user the contact us page. Username will be displayed top right,
+    '''This funnction shows the user the contact us page. Username will be displayed top right, 
    '''
-    # use render templeate functionality to automatically add name and other data
+    # use render templeate functionality to automatically add name and other data 
     if 'name' in session:
         return render_template('contact.html',name = session['name'])
     return render_template('contact.html',name = "")
 
 @app.route('/contactSend', methods=['GET','POST'])
 def contacted():
-    '''This funnction shows the user the contact us page. Username will be displayed top right,
+    '''This funnction shows the user the contact us page. Username will be displayed top right, 
    '''
-    # use render templeate functionality to automatically add name and other data
+    # use render templeate functionality to automatically add name and other data 
     if 'name' in session:
         return render_template('contacted.html',name = session['name'])
     return render_template('contacted.html',name = "")
