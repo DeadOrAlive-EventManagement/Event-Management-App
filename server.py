@@ -7,15 +7,13 @@ import pymysql
 
 app = Flask(__name__)
 app.secret_key = 'totally a secret lolz'
-db = pymysql.connect("localhost", "root", "root", "SE_Project")
+db = pymysql.connect("localhost", "root", "root", "SE_Project", charset='utf8')
 cursor = db.cursor()
 
 
 @app.route('/')
 def index():
     '''This function renders the index page of the EventManagement site'''
-    if 'customer_id' in session:
-        return redirect(url_for("home"))
     return render_template('index.html')
 
 @app.route('/checkemail',methods = ['POST','GET'])
@@ -35,6 +33,7 @@ def check_email():
 
 @app.route('/doregister',methods = ['POST'])
 def do_register():
+    print("TEST")
     '''This function enters user details into the database, then shows the "You have registered! page'''
     #Get the values from the post form. Use generate_hash before saving for security reasons.
     name = request.form['registerName'] 
@@ -42,7 +41,10 @@ def do_register():
     email = request.form['loginEmail']
     number = request.form['registerPh']
     pwd = request.form['loginPwd']
+    vendor = request.form.get('vendir',False)
     hashed_pwd = generate_password_hash(pwd)
+
+    print(vendor)
 
     #check if the user already exists 
     sql = """SELECT * FROM Customer WHERE email=%s"""
@@ -84,6 +86,7 @@ def do_sigin():
     #get values
     email = request.form["email"]
     pwd = request.form["pwd"]
+
     #do the check
     sql = "SELECT customer_id,first_name,pwd from Customer where email = %s"
     args = ([email])
@@ -94,15 +97,15 @@ def do_sigin():
         row = results[0]
         if(check_password_hash(row[2],pwd)):
             # do session stuff
+            print("Login succesfull!")
             session.clear()
             session['customer_id'] = row[0]
             session['name'] = row[1]
-            print("IN do_signin login")
             return "True"
             # return redirect(url_for('home'))
         else:
             # wrong password, tell user 
-            print("Forgot password!")
+            # print("Forgot password!")
             session.clear()
             return "False"
             # return redirect(url_for('index'))
@@ -112,7 +115,6 @@ def do_sigin():
 def signin():
     '''Redirects to correct page if session values are set
     This is because password checking is done as part of form validation'''
-    print("WHY THE FUCK HAVE YOU COME HERE")
     if('customer_id' in session):
         return redirect(url_for('home'))
     return redirect(url_for('index'))
@@ -127,8 +129,6 @@ def home():
     events = dict()
     events["Birthday"] = dict()
     events["Birthday"]["description"] = "Birthday Party for Ashley"
-    events["Birthday"]["eventid"] = 1
-    events["Birthday"]["date"] = "06-08-2018"
     vendors = dict()
     vendors["Ivy Park Venue"] = dict()
     vendors["Ivy Park Venue"]["service"] = "Venue"
@@ -139,25 +139,9 @@ def home():
     vendors["HKG Catereres"]["status"] = "Waiting"
     vendors["HKG Catereres"]["color"] = "orange"
     events["Birthday"]["vendors"] = vendors
-
-    events["Custom Event"] = dict()
-    events["Custom Event"]["description"] = "Custom event for Mike"
-    events["Custom Event"]["eventid"] = 2
-    events["Custom Event"]["date"] = "06-10-2018"
-    vendors = dict()
-    vendors["Ivy Park Venue"] = dict()
-    vendors["Ivy Park Venue"]["service"] = "Venue"
-    vendors["Ivy Park Venue"]["status"] = "Confirmed"
-    vendors["Ivy Park Venue"]["color"] = "green"
-    vendors["HKG Catereres"] = dict()
-    vendors["HKG Catereres"]["service"] = "Caterer"
-    vendors["HKG Catereres"]["status"] = "Waiting"
-    vendors["HKG Catereres"]["color"] = "orange"
-    events["Custom Event"]["vendors"] = vendors
-
-    # return render_template('manage_events.html',name = session['name'])
+    return render_template('manage_events.html', name = session['name'], events = events)
     if 'name' in session:
-        return render_template('manage_events.html',name = session['name'],events = events)
+        return render_template('manage_events.html', name = session['name'], events = events)
     return redirect(url_for('index'))
 
 @app.route('/create')
@@ -187,18 +171,10 @@ def contacted():
         return render_template('contacted.html',name = session['name'])
     return render_template('contacted.html',name = "")
 
-@app.route('/logout', methods=['POST','GET'])
+@app.route('/logout')
 def logout():
     session.clear()
-    return redirect(url_for('index'))
-
-@app.route("/services")
-def services():
-    services = dict()
-    services["catering"] = dict()
-    services["catering"]["description"] = "Some info here"
-    services["catering"]["price"] = "1000$"
-    return render_template("manage_services.html",services = services)
+    redirect(url_for('index'))
 
 if __name__ == '__main__':
 	# run!
