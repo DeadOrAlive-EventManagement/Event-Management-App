@@ -9,21 +9,24 @@ TRUNCATE Bookings;
 SET FOREIGN_KEY_CHECKS = 1;
 
 INSERT INTO Customer ( email, first_name, middle_name, last_name, phone_number, pwd) VALUES
-('acb@gmail.com', 'acb', 'ed', 'efg', '9658741230', 'acbedefg'),
-('xyz@gmail.com', 'xyz', NULL, 'uvw', '6758942536', 'uvwxyz');
+('mike@gmail.com', 'Mike', NULL, 'Jordan', '9658741230', 'mike'),
+('ashley@gmail.com', 'Ashley', NULL, 'Park', '6758942536', 'ashley');
 
-INSERT INTO Vendor ( vendor_name, vendor_location) VALUES
-('creepers', 'blore'),
-('sleepers', 'MUMBAI');
+INSERT INTO Vendor (vendor_name, vendor_location) VALUES
+('HKG Caterers', 'Bangalore'),
+('Ivy Park Venue', 'Bangalore');
 
-INSERT INTO Services (vendor_id, service_name, price_per_unit, service_type) VALUES
-(1, 'lunch food', '30', 'food'),
-(2, 'lights', '50', 'lights');
+INSERT INTO Services (vendor_id, service_id, service_name, price_per_unit, service_type) VALUES
+(1, 1, 'Lunch Food', '30', 'Catering'),
+(2, 1, 'Venue for organising small functions', '50', 'Venue');
 
-INSERT INTO Events (event_name, customer_id, budget, num_people, date_event, service_id) VALUES
-('birthday', 1, 10000, 50, '2018-10-31', 1);
+INSERT INTO Events (event_name, customer_id, budget, num_people, date_event) VALUES
+('Birthday', 1, 10000, 20, '2018-10-31'),
+('Custom Event', 1, 50000, 50, '2018-11-06');
 
-INSERT INTO Bookings (vendor_id, customer_id, service_id, booking_status) VALUES
-(1, 2, 1, 'Pending'),
-(2, 1, 2, 'Accepted');
+INSERT INTO Bookings (event_id, vendor_id, customer_id, service_id, booking_status) VALUES
+(1, 1, 1, 1, 'Pending'),
+(1, 2, 1, 1, 'Accepted'),
+(2, 1, 1, 1, 'Pending'),
+(2, 2, 1, 1, 'Accepted');
 
