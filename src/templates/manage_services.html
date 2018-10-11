@@ -54,7 +54,7 @@
                     </div>
                   </div>
                   <div class="modal-footer d-flex justify-content-center">
-                      <button class="btn btn-primary" id="saveChanges">Save Changes</button>
+                      <button class="btn btn-primary" id="saveChanges" onclick="obj.checkSubmission()">Save Changes</button>
                   </div>
               </div>
           </div>
@@ -96,7 +96,7 @@
 
 <script type="text/javascript">
   obj = {
-    checkTitleNotEmpty: function(e) {
+    checkTitleNotEmpty: function() {
       element = $('#serviceTitle');
       val = element.val();
       if(val == '') {
@@ -108,7 +108,7 @@
       }            
     },
 
-    checkDescriptionNotEmpty: function(e) {
+    checkDescriptionNotEmpty: function() {
       element = $('#serviceDescription');
       val = element.val();
       if(val == '') {
@@ -120,7 +120,7 @@
       }              
     },
 
-    checkPriceNotEmpty: function(e) {
+    checkPriceNotEmpty: function() {
       element = $('#servicePrice');
       val = element.val();
       if(val == '') {
@@ -131,7 +131,27 @@
         element[0].setCustomValidity('');
         $('#invalidPrice').html('');
       }              
-    },    
+    },
+
+    checkSubmission: function() {
+      title = $('#serviceTitle').val();
+      description = $('#serviceDescription').val();
+      price = $('#servicePrice').val();
+      // TODO(JyothsnaKS): Update this to get service type info from the form
+      service_type = "Catering";
+
+      if(title!='' && description!='' && price!=''){
+        data = {
+          "title": title,
+          "description": description,
+          "price": price,
+          "service_type": service_type
+        }
+        console.log(data);
+        $.post("services", data, function(results){
+        });
+      }
+    }    
   }
 </script>
 {% endblock %}
