@@ -63,10 +63,15 @@
 <script>
   obj = {
     cancel_event: function(e) {
-      eid = e.target.getAttribute("eventid").slice(5);
-      data = {eventid: eid}
+      event_target = e.target;
+      // Get event id from the target
+      eid = event_target.getAttribute("eventid").slice(5);
+      data = {eventid: eid};
+
+      // Call to server to delete the event and all related information
       $.post("cancelevent", data, function(results) {
-        
+        // Remove the div element
+        event_target.parentElement.parentElement.innerHTML = "";
       });
     }
   }

@@ -266,8 +266,8 @@ def services():
 
 @app.route("/cancelevent", methods=['POST'])
 def cancelevent():
-    print('cancelevent', request.form['eventid'])
-
+    # TODO(JyothsnaKS): Perform checks on data and other condition to decide if customer is allowed 
+    # to delete the event.
     cursor = db.cursor()
     sql = "DELETE from bookings where event_id=%s"
     args = ([request.form['eventid']])
@@ -279,7 +279,6 @@ def cancelevent():
     db.commit()
     cursor.close()
     
-    # TODO(JyothsnaKS): Need to fix the URL redirect
     if 'name' in session:
         return redirect(url_for('home'))
     return redirect(url_for('index'))
