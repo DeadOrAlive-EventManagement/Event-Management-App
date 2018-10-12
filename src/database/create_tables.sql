@@ -47,6 +47,7 @@ CREATE TABLE Services (
   service_name varchar(100) NOT NULL,
   price_per_unit decimal(10,0) NOT NULL,
   service_type varchar(100) DEFAULT NULL,
+  description varchar(100) DEFAULT NULL,
   FOREIGN KEY (vendor_id) REFERENCES Vendor(vendor_id),
   PRIMARY KEY(vendor_id, service_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;

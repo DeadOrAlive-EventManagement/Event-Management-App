@@ -258,11 +258,25 @@ def logout():
 
 @app.route("/services")
 def services():
+    # TODO(JyothsnaKS): Remove this once the vendor_id is set during sign in
+    session['vendor_id'] = 1
+
+    cursor = db.cursor()
+    sql = " SELECT service_type,price_per_unit,description from services cross join vendor where vendor.vendor_id=services.vendor_id and vendor.vendor_id=%s"
+    args = ([session['vendor_id']])
+    cursor.execute(sql, args)
+    results = cursor.fetchall()
+    cursor.close()
+
     services = dict()
-    services["catering"] = dict()
-    services["catering"]["description"] = "Some info here"
-    services["catering"]["price"] = "1000$"
-    return render_template("manage_services.html",services = services)
+
+    for row in results:
+        service_type = row[0]
+        services[service_type] = dict()
+        services[service_type]["price"] = str(row[1])
+        services[service_type]["description"] = row[2]
+
+    return render_template("manage_services.html", services = services)
 
 @app.route("/cancelevent", methods=['POST'])
 def cancelevent():
