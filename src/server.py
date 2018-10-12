@@ -42,39 +42,60 @@ def check_email():
 @app.route('/doregister',methods = ['POST'])
 def do_register():
     '''This function enters user details into the database, then shows the "You have registered! page'''
-    #Get the values from the post form. Use generate_hash before saving for security reasons.
+    # Get the values from the post form. Use generate_hash before saving for security reasons.
     name = request.form['registerName'] 
     names = name.split()
     email = request.form['loginEmail']
     number = request.form['registerPh']
     pwd = request.form['loginPwd']
     vendor = request.form.get('vendor',False)
-    print(vendor)
     hashed_pwd = generate_password_hash(pwd)
 
-    #check if the user already exists 
-    sql = """SELECT * FROM Customer WHERE email=%s"""
-    args =([email])
-    cursor = db.cursor()
-    cursor.execute(sql,args)
-    results = cursor.fetchall()
-    cursor.close()
-
-    if(results):
-        #Do appropriate error handling
-        return redirect(url_for('index'))
-    else:
-        sql = """INSERT INTO Customer(email,first_name,middle_name,last_name,phone_number,pwd) values(%s,%s,%s,%s,%s,%s)"""
-        if(len(names) == 1):
-            args = (email,names[0],None,"",number,hashed_pwd)
-        elif(len(names) == 2):
-            args = (email,names[0],None,names[1],number,hashed_pwd)
-        else:
-            args = (email,names[0],names[1],names[2],number,hashed_pwd)
+    if vendor == 'on':
+        sql = """SELECT * FROM vendor WHERE email=%s"""
+        args =([email])
         cursor = db.cursor()
         cursor.execute(sql,args)
-        db.commit()
+        results = cursor.fetchall()
         cursor.close()
+
+        # Vendor has already registered
+        if(results):
+            #Do appropriate error handling
+            return redirect(url_for('index'))
+        else:
+            location = request.form['location']
+
+            sql = """INSERT INTO Vendor(email,vendor_name,phone_number,pwd,vendor_location) values(%s,%s,%s,%s,%s)"""        
+            args = (email,name,number,hashed_pwd,location)
+            cursor = db.cursor()
+            cursor.execute(sql,args)
+            db.commit()
+            cursor.close()
+    else:
+        sql = """SELECT * FROM Customer WHERE email=%s"""
+        args =([email])
+        cursor = db.cursor()
+        cursor.execute(sql,args)
+        results = cursor.fetchall()
+        cursor.close()
+
+        # Customer has already registered
+        if(results):
+            #Do appropriate error handling
+            return redirect(url_for('index'))
+        else:
+            sql = """INSERT INTO Customer(email,first_name,middle_name,last_name,phone_number,pwd) values(%s,%s,%s,%s,%s,%s)"""
+            if(len(names) == 1):
+                args = (email,names[0],None,"",number,hashed_pwd)
+            elif(len(names) == 2):
+                args = (email,names[0],None,names[1],number,hashed_pwd)
+            else:
+                args = (email,names[0],names[1],names[2],number,hashed_pwd)
+            cursor = db.cursor()
+            cursor.execute(sql,args)
+            db.commit()
+            cursor.close()
     # Using the redirect function because then the "/registered endpoint will show up, which makes more sense to user"
     return redirect(url_for('registered'))
 
