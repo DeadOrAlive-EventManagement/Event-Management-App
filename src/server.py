@@ -12,12 +12,13 @@ db = pymysql.connect("localhost", "root", "", "SE_Project", charset="latin1")
 cursor = db.cursor()
 
 
-
 @app.route('/')
 def index():
     '''This function renders the index page of the EventManagement site'''
     if 'customer_id' in session:
         return redirect(url_for("home"))
+    elif 'vendor_id' in session:
+        return redirect(url_for("services"))
     return render_template('index.html')
 
 @app.route('/checkemail',methods = ['POST','GET'])
@@ -27,7 +28,19 @@ def check_email():
     print("json is ", request.json)
 
     email = request.form['email']
+
     sql = """SELECT * FROM Customer WHERE email=%s"""
+    args =([email])
+    cursor = db.cursor()
+    cursor.execute(sql,args)
+    results = cursor.fetchall()
+    cursor.close()
+
+    # Email is valid
+    if results:
+        return "False"
+
+    sql = """SELECT * FROM Vendor WHERE email=%s"""
     args =([email])
 
     cursor = db.cursor()
@@ -35,8 +48,11 @@ def check_email():
     results = cursor.fetchall()
     cursor.close()
 
-    if(results):
+    # Email is valid
+    if results:
         return "False"
+
+    # # Email is invalid
     return "True"
 
 @app.route('/doregister',methods = ['POST'])
@@ -110,24 +126,24 @@ def registered():
 
 
 @app.route('/dosignin',methods=['POST'])
-def do_sigin():
+def do_signin():
     '''This function authenticates the sign in by checking password against database.
     It also creates a session, with the Username stored.
     Redirects to /home so that it makes more sense to user'''
     #add checking procedure
-    #get values
+    # Get the form values
     email = request.form["email"]
     pwd = request.form["pwd"]
-    #do the check
+
+    # Check if customer exists
+    cursor = db.cursor()
     sql = "SELECT customer_id,first_name,pwd from Customer where email = %s"
     args = ([email])
-
-    cursor = db.cursor()
     cursor.execute(sql,args)
     results = cursor.fetchall()
     cursor.close()
 
-    if(results):
+    if results:
         row = results[0]
 
         if(check_password_hash(row[2],pwd)):
@@ -135,15 +151,34 @@ def do_sigin():
             session.clear()
             session['customer_id'] = row[0]
             session['name'] = row[1]
-            print("IN do_signin login")
             return "True"
-            # return redirect(url_for('home'))
         else:
             # wrong password, tell user 
-            print("Forgot password!")
             session.clear()
             return "False"
-            # return redirect(url_for('index'))
+    
+    # If we reach here, it means that the either the user is a vendor he has not registered with us yet
+    cursor = db.cursor()
+    sql = "SELECT vendor_id,vendor_name,pwd from Vendor where email = %s"
+    args = ([email])
+    cursor.execute(sql,args)
+    results = cursor.fetchall()
+    cursor.close()
+
+    # Check if customer exists
+    if results:
+        row = results[0]
+        if(check_password_hash(row[2],pwd)):
+            # do session stuff
+            session.clear()
+            session['vendor_id'] = row[0]
+            session['name'] = row[1]
+            return "True"
+        else:
+            # wrong password, tell user 
+            session.clear()
+            return "False"
+    # If we still reach here, it means that the user is not a registered one
     return "False"
 
 @app.route('/signin',methods=['POST'])
@@ -153,16 +188,23 @@ def signin():
 
     if('customer_id' in session):
         return redirect(url_for('home'))
+    elif('vendor_id') in session:
+        # TODO(JyothsnaKS): Fix header for vendor
+        return redirect(url_for('home'))
     return redirect(url_for('index'))
     # return "False"
 
 @app.route('/home')
 def home():
-    # This function shows the user the homepage for a customer. Username will be displayed top right, 
-    # and all current events will be displayed on the page, dynamically.
+    # This function shows the user the homepage for a user.
+    # Username will be displayed top right, and all current events will be displayed on the page for the customer, dynamically.
+    # For the vendor, all their services will be displayed, dynamically
     # Use render template functionality to automatically add name and other data
 
-    # Sample dictionary template returned:
+    if 'vendor_id' in session:
+        return redirect(url_for('services'))
+
+    # Sample dictionary template returned for customer:
     # events = dict()
     # events["Birthday"] = dict()
     # events["Birthday"]["description"] = "Birthday Party for Ashley"
@@ -179,7 +221,7 @@ def home():
     # vendors["HKG Catereres"]["color"] = "orange"
     # events["Birthday"]["vendors"] = vendors
 
-    if 'name' in session:
+    if 'customer_id' in session:
         # Query to get all events created by a customer
         sql = "SELECT * FROM Events where customer_id=%s"
         args = ([session['customer_id']])
@@ -250,8 +292,8 @@ def create():
     '''This funnction shows the user the create event page. Username will be displayed top right, 
     and all current events will be displayed on the page, dynamically.'''
     # use render templeate functionality to automatically add name and other data 
-    if 'name' in session:
-        return render_template('create_event.html',name = session['name'])
+    if 'customer_id' in session:
+        return render_template('create_event.html', name = session['name'])
     return redirect(url_for('index'))
 
 @app.route('/contact')
@@ -260,7 +302,7 @@ def contact():
    '''
     # use render templeate functionality to automatically add name and other data 
     if 'name' in session:
-        return render_template('contact.html',name = session['name'])
+        return render_template('contact.html', name = session['name'])
     return render_template('contact.html',name = "")
 
 @app.route('/contactSend', methods=['GET','POST'])
@@ -269,8 +311,8 @@ def contacted():
    '''
     # use render templeate functionality to automatically add name and other data 
     if 'name' in session:
-        return render_template('contacted.html',name = session['name'])
-    return render_template('contacted.html',name = "")
+        return render_template('contacted.html', name = session['name'])
+    return render_template('contacted.html', name = "")
 
 @app.route('/logout', methods=['POST','GET'])
 def logout():
@@ -314,7 +356,7 @@ def cancelevent():
     db.commit()
     cursor.close()
     
-    if 'name' in session:
+    if 'customer_id' in session:
         return redirect(url_for('home'))
     return redirect(url_for('index'))
 
