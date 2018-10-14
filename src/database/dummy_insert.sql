@@ -16,13 +16,14 @@ INSERT INTO Vendor (vendor_name, vendor_location, email, phone_number, pwd) VALU
 ('HKG Caterers', 'Bangalore', 'hkg@gmail.com', '8968765009', 'hkg'),
 ('Ivy Park Venue', 'Bangalore', 'ivy@gmail.com', '7865786987', 'ivy');
 
-INSERT INTO Services (vendor_id, service_id, service_name, price_per_unit, service_type) VALUES
-(1, 1, 'Lunch Food', '30', 'Catering'),
-(2, 1, 'Venue for organising small functions', '50', 'Venue');
+INSERT INTO Services (vendor_id, service_id, service_name, price_per_unit, service_type, description) VALUES
+(1, 1, 'Lunch Food', '30', 'Catering', 'We are best in Bangalore to serve delicious south indian food'),
+(2, 1, 'Venue for organising small functions', '50', 'Venue', 'Welcome your guests to the comfort of the spacious 5000 sq ft. indoor hall with 600-chair seating');
 
-INSERT INTO Events (event_name, customer_id, budget, num_people, date_event) VALUES
-('Birthday', 1, 10000, 20, '2018-10-31'),
-('Custom Event', 1, 50000, 50, '2018-11-06');
+
+INSERT INTO Events (event_name, customer_id, budget, num_people, date_event, details) VALUES
+('Birthday', 1, 10000, 20, '2018-10-31', 'Birthday party for Ashley'),
+('Custom Event', 1, 50000, 50, '2018-11-06', 'Farewell lunch for Mike');
 
 INSERT INTO Bookings (event_id, vendor_id, customer_id, service_id, booking_status) VALUES
 (1, 1, 1, 1, FALSE),

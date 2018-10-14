@@ -1,4 +1,6 @@
 {% extends "base.html" %}
+{% block nav_base %}{% endblock %}
+{% block nav_vendor %}{% endblock %}
 {% block home %}active{% endblock %}
 {% block main %}
 <div class="container">
@@ -21,8 +23,8 @@
             <medium class="text-muted">Event Date: {{ details["date"] }}</medium>
           </div>
           <small class="text-muted">{{ details["description"] }}</small><br>
-          <button type="button" class="mt-3 btn btn-info" data-toggle="collapse" data-target="#event{{ details['eventid']}}" aria-expanded="false" aria-controls="collapseExample">Check Details</button>
-          <button type="button" class="mt-3 btn btn-warning">Cancel Event</button>
+          <button type="button" class="mt-3 btn btn-info" data-toggle="collapse" data-target="#event{{details['eventid']}}" aria-expanded="false" aria-controls="collapseExample">Check Details</button>
+          <button type="button" class="mt-3 btn btn-warning event{{details['eventid']}}" onclick="obj.cancel_event(event)" eventid="event{{details['eventid']}}">Cancel Event</button>
           <!-- Collapsible element -->
           <div class="collapse" id="event{{ details['eventid'] }}">
             <div class="mt-3">
@@ -59,4 +61,21 @@
     {% endfor %}
     <!--Grid row-->
 </div>
+
+<script>
+  obj = {
+    cancel_event: function(e) {
+      event_target = e.target;
+      // Get event id from the target
+      eid = event_target.getAttribute("eventid").slice(5);
+      data = {eventid: eid};
+
+      // Call to server to delete the event and all related information
+      $.post("cancelevent", data, function(results) {
+        // Remove the div element
+        event_target.parentElement.parentElement.innerHTML = "";
+      });
+    }
+  }
+</script>
 {% endblock %}

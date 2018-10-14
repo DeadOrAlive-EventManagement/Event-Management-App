@@ -1,4 +1,4 @@
-SET FOREIGN_KEY_CHECKS = 0;
+/* SET FOREIGN_KEY_CHECKS = 0;
 DROP TABLE IF EXISTS Bookings;
 DROP TABLE IF EXISTS Customer;
 DROP TABLE IF EXISTS Events;
@@ -6,7 +6,7 @@ DROP TABLE IF EXISTS Services;
 DROP TABLE IF EXISTS Vendor;
 SET FOREIGN_KEY_CHECKS = 1;
 
-DROP DATABASE SE_Project;
+DROP DATABASE SE_Project; */
 
 CREATE DATABASE SE_Project;
 USE SE_Project;
@@ -28,6 +28,7 @@ CREATE TABLE Events (
   budget int(11) NOT NULL,
   num_people int(11) DEFAULT NULL,
   date_event date DEFAULT NULL,
+  details varchar(500) DEFAULT NULL,
   FOREIGN KEY (customer_id) REFERENCES Customer(customer_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -46,6 +47,7 @@ CREATE TABLE Services (
   service_name varchar(100) NOT NULL,
   price_per_unit decimal(10,0) NOT NULL,
   service_type varchar(100) DEFAULT NULL,
+  description varchar(100) DEFAULT NULL,
   FOREIGN KEY (vendor_id) REFERENCES Vendor(vendor_id),
   PRIMARY KEY(vendor_id, service_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;

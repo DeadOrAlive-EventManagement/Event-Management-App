@@ -15,7 +15,7 @@
   <link href="{{ url_for('static',filename = 'css/mdb.min.css')}}" rel="stylesheet">
   <!-- Your custom styles (optional) -->
   <link href="{{ url_for('static',filename = 'css/style.css')}}" rel="stylesheet">
-  {% block head %}{% endblock %}
+  {% block head %} {% endblock %}
 </head>
 
 <body>
@@ -42,22 +42,16 @@
           <li class="nav-item {% block home %}{% endblock %}">
               <a class="nav-link " href="/home">Home</a>
           </li>
+          <li class="nav-item {% block create %}{% endblock %}">
+              <a class="nav-link" href="/create">Create Event</a>
+          </li>
           <li class="nav-item {% block help %}{% endblock %}">
               <a class="nav-link" href="#">Help</a>
           </li>
           <li class="nav-item {% block contact %}{% endblock %}">
               <a class="nav-link" href="/contact">Contact Us</a>
           </li>
-          {% block nav_vendor %}
-          <li class="nav-item {% block manage_event %}{% endblock %}">
-            <a class="nav-link" href="#">Mangae Event</a>
-          </li>
-          {% endblock %}
-          {% block nav_customer %}
-        <li class="nav-item {% block create %}{% endblock %}">
-            <a class="nav-link" href="/create">Create Event</a>
-        </li>
-        {% endblock %}
+       
       </ul>
       {% block nav %}
       <div class="nav-item dropdown">

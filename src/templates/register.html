@@ -114,16 +114,33 @@
                         <!--Grid column-->
             </div>
             
-            <div class="row mt-4 justify-content-center">
+           <div class="row mt-4 justify-content-center">
                 
                 <h5 class="my-auto align-self-start">Customer</h5>
                 <label class="bs-switch mx-2">
                     
-                        <input type="checkbox" name="vendor">
+                        <input type="checkbox" name="vendor" id="checkVendor" onclick="UserTypeCheck(event)">
                         <span class="slider round"></span> </input>
                         
                     </label>
                     <h5 class="my-auto">Vendor</h5>
+            </div>
+
+            <div class="row" style="display:none"  id="loc">
+
+                <!--Grid column-->
+                <div class="col-md-auto w-100">
+                    <div class="md-form mb-0">
+                        <input type="text" id="Location" name="location" class="form-control" >
+                        <label for="location" class="">Location</label>
+
+                        <div class="invalid-feedback" id = "invalidConPwd">Please enter a location
+                            </div>
+                    </div>
+
+                    
+                </div>
+                <!--Grid column-->
             </div>
 
 
@@ -161,6 +178,19 @@
 {% endblock %}
 {% block script %}
   <script>
+      UserTypeCheck = function(event){
+        if(document.getElementById("checkVendor").checked == true){
+            //alert("CHECKED");
+            document.getElementById("Location").required = true;
+            document.getElementById("loc").style.display='block';
+        }
+        else
+        {
+            //alert("UNCHECKED");
+        document.getElementById("Location").required = false;
+        document.getElementById("loc").style.display='none';
+        }
+    }
       obj = {
        stopSubmission: function() {
             'use strict';
@@ -232,6 +262,7 @@
     }
       }
       obj.stopSubmission();
+      UserTypeCheck();
 
   </script>
 {% endblock %}
