@@ -1,73 +1,10 @@
-<!DOCTYPE html>
-<html>
-<head>
-      <title>The Materialize Collapsible Example</title>
-      <meta name = "viewport" content = "width = device-width, initial-scale = 1">
-      <!-- Font Awesome -->
-      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-      <!-- Bootstrap core CSS -->
-      <link href= "{{ url_for('static',filename = 'css/bootstrap.min.css')}}" rel="stylesheet">
-      <!-- Material Design Bootstrap -->
-      <link href="{{ url_for('static',filename = 'css/mdb.min.css')}}" rel="stylesheet">
-      <!-- Your custom styles (optional) -->
-      <link href="{{ url_for('static',filename = 'css/style.css')}}" rel="stylesheet">
-      <link rel = "stylesheet"
-         href = "https://fonts.googleapis.com/icon?family=Material+Icons">
-      <link rel = "stylesheet"
-         href = "https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.3/css/materialize.min.css">
-      <script type = "text/javascript"
-         src = "https://code.jquery.com/jquery-2.1.1.min.js"></script>
-      <script src = "https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.3/js/materialize.min.js">
-      </script>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet">
+{% extends "base.html" %}
+{% block head %}
 <link href="{{ url_for('static', filename = 'css/create_event.css') }}" rel="stylesheet">
-
-<body>
-
-<!--Navbar-->
-<nav class="navbar navbar-expand-lg navbar-dark primary-color sticky-top">
-
-    <!-- Navbar brand -->
-    <a class="navbar-brand" href="#">Event Manager</a>
-  
-    <!-- Collapse button -->
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#basicExampleNav" aria-controls="basicExampleNav"
-        aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-  
-    <!-- Collapsible content -->
-    <div class="collapse navbar-collapse" id="basicExampleNav">
-  
-        <!-- Links -->
-        <ul class="navbar-nav mr-auto">
-            <li class="nav-item active">
-                <a class="nav-link" href=#>Home
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="/create">Create Event</a>
-            </li>
-            
-            <li class="nav-item">
-                <a class="nav-link" href="#">Help</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="/contact">Contact Us</a>
-            </li>
-        </ul>
-        <!-- Links -->
-        <span class="navbar-text white-text">
-          Welcome, {{name}}!
-        </span>
-    </div>
-    <!-- Collapsible content -->
-  
-  </nav>
-  <!--/.Navbar-->
-
-
+{% endblock %}
+{% block create %}active{% endblock %}
+{% block main %}
+<div class="container">
 <form class = "col s12" id="regForm" action="/action_page.php">
   <h2>Book an event</h2>
   <!-- One "tab" for each step in the form: -->
@@ -197,17 +134,8 @@
     <span class="step"></span>
   </div>
 </form>
-<script type="text/javascript" src="{{ url_for('static', filename = 'js/create_event.js') }}"></script>
-
- <!-- JQuery -->
- <script type="text/javascript" src="{{ url_for('static',filename = 'js/jquery-3.3.1.min.js')}}"></script>
- <!-- Bootstrap tooltips -->
- <script type="text/javascript" src="{{ url_for('static',filename = 'js/popper.min.js')}}"></script>
- <!-- Bootstrap core JavaScript -->
- <script type="text/javascript" src="{{ url_for('static',filename = 'js/bootstrap.min.js')}}"></script>
- <!-- MDB core JavaScript -->
- <script type="text/javascript" src="{{ url_for('static',filename = 'js/mdb.min.js')}}"></script>
-
-
-</body>
-</html>
+</div>
+{% endblock %}
+{%  block script %}
+<script src = "{{ url_for('static', filename = 'js/create_event.js') }}"></script>
+{% endblock %}
