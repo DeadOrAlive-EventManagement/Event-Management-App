@@ -321,19 +321,23 @@ def logout():
 
 @app.route('/addservice', methods=['POST'])
 def addservice():
-    # TODO(JyothsnaKS): Implement the SQL insert
     if 'vendor_id' in session:
+        print(request.form)
         cursor = db.cursor()
-        sql = "INSERT into services(vendor_id,service_name,price_per_unit,service_type,description) values (%d,%s,%f,%s,%s)"
-        args = ([session['vendor_id']])
-        # cursor_execute(sql, args)
-        # db.commit()
+        sql = "INSERT into services(vendor_id,service_name,price_per_unit,service_type,description) values (%s,%s,%s,%s,%s)"
+        args = (session['vendor_id'],
+                request.form['title'],
+                request.form['price'],
+                request.form['service_type'],
+                request.form['description'])
+        cursor.execute(sql, args)
+        db.commit()
         cursor.close()
+        return 'true' 
 
 @app.route("/services")
 def services():
     if 'vendor_id' in session:
-        print(session)
         cursor = db.cursor()
         sql = " SELECT service_type,price_per_unit,description from services cross join vendor where vendor.vendor_id=services.vendor_id and vendor.vendor_id=%s"
         args = ([session['vendor_id']])

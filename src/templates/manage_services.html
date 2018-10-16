@@ -79,7 +79,7 @@
             </tr>
           </thead>
 
-          <tbody>
+          <tbody id="serviceList">
             <tr>
             {% for service, details in services.items()%}
                 <td>{{ service }}</td>
@@ -149,9 +149,12 @@
           "price": price,
           "service_type": service_type
         }
-      
-        $.post("addservice", data, function(results){
-          $('#saveChanges').attr('data-dismiss','modal');
+
+        $('#saveChanges').attr('data-dismiss','modal');
+
+        // TODO(JyothsnaKS): Add unique id to 'REMOVE' button
+        $.post("addservice", data, function(results){          
+          $('#serviceList').append("<tr><td>"+service_type+"</td><td>"+description+"</td><td>"+price+"</td><td><button type=\"button\" class=\"btn btn-outline-primary btn-sm m-0 waves-effect\">Remove</button></td></tr>");
         });
       } else {
         obj.checkTitleNotEmpty();
