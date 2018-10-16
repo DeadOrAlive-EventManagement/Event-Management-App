@@ -337,8 +337,7 @@ def services():
             services[service_type] = dict()
             services[service_type]["price"] = str(row[1])
             services[service_type]["description"] = row[2]
-        print(services)
-        return render_template("manage_services.html", services = services)
+        return render_template("manage_services.html", services = services, name = session['name'])
     return redirect(url_for('index')) 
 
 @app.route("/cancelevent", methods=['POST'])
