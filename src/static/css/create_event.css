@@ -1,9 +1,10 @@
 * {
   box-sizing: border-box;
 }
-
 body {
-  background-color: rgba(0,0,255, 0.1);;
+     background-image: url("/static/img/trial5.jpeg");
+     background-repeat: no-repeat;
+     background-size: 100%,80%;
 }
 
 #regForm {

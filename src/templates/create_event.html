@@ -1,54 +1,70 @@
 {% extends "base.html" %}
 {% block head %}
 <link href="{{ url_for('static', filename = 'css/create_event.css') }}" rel="stylesheet">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta http-equiv="x-ua-compatible" content="ie=edge">
+<link rel = "stylesheet" href = "https://fonts.googleapis.com/icon?family=Material+Icons">
+<!--this is for the jquery -->
+<script type = "text/javascript"  src = "https://code.jquery.com/jquery-2.1.1.min.js"></script>
+<!-- <link rel = "stylesheet" href = "https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.3/css/materialize.min.css"> -->
+<link href ="{{ url_for('static',filename = 'css/try.css')}}" rel="stylesheet">
+<!-- <link href ="{{ url_for('static',filename = 'css/create_event_MD.css')}}" rel="stylesheet"> -->
+<link href ="{{ url_for('static',filename = 'css/create_event.css')}}" rel="stylesheet">
+
+<link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet">
+
+
+<script src = "https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.3/js/materialize.min.js"></script>
+
 {% endblock %}
 {% block create %}active{% endblock %}
 {% block main %}
 <div class="container">
-<form class = "col s12" id="regForm" action="/action_page.php">
-  <h2>Book an event</h2>
-  <!-- One "tab" for each step in the form: -->
-  <div class="tab">
-    <div class = "row">
-        <div class = "row">
-               <div class = "input-field col s6">
-                 <!-- Change the icon -->
-                  <i class = "material-icons prefix">cake</i>
-
-                  <input placeholder = "Enter Event Type" value = "" id = "event_type"
-                     type = "text" class = "active validate" required />
-                  <label for = "event_type">Event Type </label>
-               </div>
-
-               <div class = "input-field col s6">
-                 <!-- Change the icon -->
-                  <i class = "material-icons prefix">group</i>
-                  <label for = "num_people">Number of People</label>
-                  <input id = "num_people" type = "text" placeholder = "Enter Number of People"
-                     class = "validate" required />
-               </div>
-            </div>
-
+    <form class = "col s12 " id="regForm" action="/action_page.php">
+      <h2>Book an event</h2>
+      <!-- One "tab" for each step in the form: -->
+      <div class="tab">
+        <div class = "row ">
             <div class = "row">
-              <div class = "input-field col s6">
-                <!-- Change the icon -->
-                 <i class = "material-icons prefix">date_range</i>
+                   <div class = "input-field col s6">
+                     <!-- Change the icon -->
+                      <i class = "material-icons prefix">cake</i>
+                      <label for = "event_type">Event Type </label>
+                      <input placeholder = "Enter Event Type" value = "" id = "event_type"
+                         type = "text" class = "active validate" required />
 
-                 <input type = "text" class id = "dt_ev"  class = "active datepicker" required />
-                    <label for = "dt_ev"> Choose date</label>
-              </div>
+                   </div>
 
-              <div class = "input-field col s6">
-                <!-- Change the icon -->
-                 <i class = "material-icons prefix">attach_money</i>
-                 <label for = "budget">Budget for the Event</label>
-                 <input id = "budget" type = "text" placeholder = "Enter Budget of the Event"
-                    class = "validate" required />
-              </div>
-            </div>
+                   <div class = "input-field col s6">
+                     <!-- Change the icon -->
+                      <i class = "material-icons prefix">group</i>
+                      <label for = "num_people">Number of People</label>
+                      <input id = "num_people" type = "text" placeholder = "Enter Number of People"
+                         class = "validate" required />
+                   </div>
+                </div>
 
-      </div>
-    </div>
+                <div class = "row">
+                  <div class = "input-field col s6">
+                    <!-- Change the icon -->
+                     <i class = "material-icons prefix">date_range</i>
+                     <label for = "dt_ev"> Choose date</label>
+                     <input type = "date" class id = "dt_ev"  class = "active datepicker" required />
+
+                  </div>
+
+                  <div class = "input-field col s6">
+                    <!-- Change the icon -->
+                     <i class = "material-icons prefix">attach_money</i>
+                     <label for = "budget">Budget for the Event</label>
+                     <input id = "budget" type = "text" placeholder = "Enter Budget of the Event"
+                        class = "validate" required />
+                  </div>
+                </div>
+
+          </div>
+        </div>
 
   <div class="tab"><h5>Select your vendors</h5>:
     <!-- We need to change this part -->
@@ -78,6 +94,8 @@
                   </div>
                 </div>
               </div>
+          </div>
+          <div class = "row">
               <div class="col s3">
                 <div class="card blue darken-1">
                   <div class="card-content white-text">
