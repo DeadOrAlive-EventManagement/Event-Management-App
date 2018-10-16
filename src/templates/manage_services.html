@@ -16,7 +16,7 @@
     <!--Grid row-->
 
     <div class="mt-5 row">
-      <div class="modal fade" id="modalContactForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal fade" id="modalContactForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="false">
           <div class="modal-dialog" role="document">
               <div class="modal-content">
                   <div class="modal-header text-center">
@@ -43,13 +43,13 @@
                           <div class="invalid-feedback d-block" id="invalidDescription"></div>
                       </div>
                       <div class="form-check mb-3">
-                        <input class="form-check-input" type="radio" name="exampleRadios" id="serviceTypeCatering" value="catering" checked>
+                        <input class="form-check-input" type="radio" name="serviceType" id="serviceTypeCatering" value="catering" checked>
                         <label class="form-check-label" for="serviceTypeCatering">
                             Catering
                         </label>
                     </div>
                     <div class="form-check mb-3">
-                        <input class="form-check-input" type="radio" name="exampleRadios" id="serviceTypeDecoration" value="decoration">
+                        <input class="form-check-input" type="radio" name="serviceType" id="serviceTypeDecoration" value="decoration">
                         <label class="form-check-label" for="serviceTypeDecoration">
                             Decoration
                         </label>
@@ -139,8 +139,8 @@
       title = $('#serviceTitle').val();
       description = $('#serviceDescription').val();
       price = $('#servicePrice').val();
-      // TODO(JyothsnaKS): Update this to get service type info from the form
-      service_type = "Catering";
+      // Get service type from the radio button which is checked
+      service_type = $("input[name='serviceType']:checked").val();
 
       if(title!='' && description!='' && price!=''){
         data = {
@@ -149,9 +149,14 @@
           "price": price,
           "service_type": service_type
         }
-        console.log(data);
-        $.post("services", data, function(results){
+      
+        $.post("addservice", data, function(results){
+          $('#saveChanges').attr('data-dismiss','modal');
         });
+      } else {
+        obj.checkTitleNotEmpty();
+        obj.checkPriceNotEmpty();
+        obj.checkDescriptionNotEmpty();
       }
     }    
   }

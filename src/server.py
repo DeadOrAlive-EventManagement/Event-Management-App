@@ -319,6 +319,17 @@ def logout():
     session.clear()
     return redirect(url_for('index'))
 
+@app.route('/addservice', methods=['POST'])
+def addservice():
+    # TODO(JyothsnaKS): Implement the SQL insert
+    if 'vendor_id' in session:
+        cursor = db.cursor()
+        sql = "INSERT into services(vendor_id,service_name,price_per_unit,service_type,description) values (%d,%s,%f,%s,%s)"
+        args = ([session['vendor_id']])
+        # cursor_execute(sql, args)
+        # db.commit()
+        cursor.close()
+
 @app.route("/services")
 def services():
     if 'vendor_id' in session:
