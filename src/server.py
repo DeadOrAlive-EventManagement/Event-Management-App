@@ -322,24 +322,62 @@ def logout():
 @app.route('/addservice', methods=['POST'])
 def addservice():
     if 'vendor_id' in session:
-        print(request.form)
+        vendor_id = session['vendor_id']
+        service_name = request.form['title']
+
         cursor = db.cursor()
         sql = "INSERT into services(vendor_id,service_name,price_per_unit,service_type,description) values (%s,%s,%s,%s,%s)"
-        args = (session['vendor_id'],
-                request.form['title'],
+        args = (vendor_id,
+                service_name,
                 request.form['price'],
                 request.form['service_type'],
                 request.form['description'])
         cursor.execute(sql, args)
         db.commit()
+
+        # TODO(JyothsnaKS): Find a better way to return service_id for the remove button id
+        # Or perform check to ensure service name is unique
+        sql = "SELECT service_id from services where vendor_id=%s and service_name=%s"
+        args = ([vendor_id, service_name])
+        cursor.execute(sql,args)
+        results = cursor.fetchall()
+        service_id = results[0][0]
         cursor.close()
-        return 'true' 
+        return str(service_id)
+    redirect(url_for('index')) 
+
+@app.route('/removeservice', methods=['POST'])
+def removeservice():
+    if 'vendor_id' in session:
+        service_id = request.form['serviceid']
+        
+        cursor = db.cursor()
+        sql = "SELECT service_id from Bookings where service_id=%s"
+        args = ([service_id])
+        cursor.execute(sql,args)
+        results = cursor.fetchall()
+
+        # if the service has booking pending return false saying that service cannot be deleted
+        if results:
+            cursor.close()
+            return 'false'
+        else:
+            # Delete service from table
+            sql = "DELETE from services where service_id=%s"
+            args = ([service_id])
+            cursor.execute(sql,args)
+            db.commit()
+            cursor.close()
+            return 'true'
+
+    return redirect(url_for('index'))
+
 
 @app.route("/services")
 def services():
     if 'vendor_id' in session:
         cursor = db.cursor()
-        sql = " SELECT service_type,price_per_unit,description from services cross join vendor where vendor.vendor_id=services.vendor_id and vendor.vendor_id=%s"
+        sql = " SELECT service_type,price_per_unit,description,service_id from services cross join vendor where vendor.vendor_id=services.vendor_id and vendor.vendor_id=%s"
         args = ([session['vendor_id']])
         cursor.execute(sql, args)
         results = cursor.fetchall()
@@ -352,6 +390,7 @@ def services():
             services[service_type] = dict()
             services[service_type]["price"] = str(row[1])
             services[service_type]["description"] = row[2]
+            services[service_type]["service_id"] = row[3]
         return render_template("manage_services.html", services = services, name = session['name'])
     return redirect(url_for('index')) 
 

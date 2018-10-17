@@ -85,7 +85,7 @@
                 <td>{{ service }}</td>
                 <td>{{ details["description"] }}</td>
                 <td>{{ details["price"] }}</td>
-                <td><button type="button" class="btn btn-outline-primary btn-sm m-0 waves-effect">Remove</button></td>
+                <td><button type="button" class="btn btn-outline-primary btn-sm m-0 waves-effect" serviceid="{{details['service_id']}}" onclick="obj.removeService(event)">Remove</button></td>
             </tr>
             {% endfor %}
           </tbody>
@@ -154,14 +154,32 @@
 
         // TODO(JyothsnaKS): Add unique id to 'REMOVE' button
         $.post("addservice", data, function(results){          
-          $('#serviceList').append("<tr><td>"+service_type+"</td><td>"+description+"</td><td>"+price+"</td><td><button type=\"button\" class=\"btn btn-outline-primary btn-sm m-0 waves-effect\">Remove</button></td></tr>");
+          $('#serviceList').append("<tr><td>"+service_type+"</td><td>"+description+"</td><td>"+price+"</td><td><button type=\"button\" class=\"btn btn-outline-primary btn-sm m-0 waves-effect\" serviceid=\""+results+"\" onclick=\"obj.removeService(event)\">Remove</button></td></tr>");
         });
       } else {
         obj.checkTitleNotEmpty();
         obj.checkPriceNotEmpty();
         obj.checkDescriptionNotEmpty();
       }
-    }    
+    },   
+
+    removeService: function(e) {
+      event_target = e.target;
+      // Get service id from the target
+      sid = event_target.getAttribute("serviceid");
+      data = {serviceid: sid};
+      // Call to server to remove the service and all related information
+      $.post("removeservice", data, function(results) {
+        // Service was successfully removed
+        if(results == 'true') {
+          // Remove the row in table
+          event_target.parentElement.parentElement.innerHTML = "";
+        } else {
+          // Existing service has bookings pending
+          alert("Sorry, we cannot remove the service because it has pending bookings.");
+        }
+      });
+    }
   }
 </script>
 {% endblock %}
