@@ -225,6 +225,7 @@ def home():
         # Query to get all events created by a customer
         sql = "SELECT * FROM Events where customer_id=%s"
         args = ([session['customer_id']])
+        
 
         # Executing the query
         cursor = db.cursor()
@@ -275,6 +276,9 @@ def home():
                 if subrow[0] == 1: 
                     vendors[vendor_name]["status"] = "Confirmed"
                     vendors[vendor_name]["color"] = "green"
+                elif subrow[0] == 2: 
+                    vendors[vendor_name]["status"] = "Rejected"
+                    vendors[vendor_name]["color"] = "red"
                 else:
                     vendors[vendor_name]["status"] = "Waiting"
                     vendors[vendor_name]["color"] = "orange"
@@ -319,65 +323,12 @@ def logout():
     session.clear()
     return redirect(url_for('index'))
 
-@app.route('/addservice', methods=['POST'])
-def addservice():
-    if 'vendor_id' in session:
-        vendor_id = session['vendor_id']
-        service_name = request.form['title']
-
-        cursor = db.cursor()
-        sql = "INSERT into services(vendor_id,service_name,price_per_unit,service_type,description) values (%s,%s,%s,%s,%s)"
-        args = (vendor_id,
-                service_name,
-                request.form['price'],
-                request.form['service_type'],
-                request.form['description'])
-        cursor.execute(sql, args)
-        db.commit()
-
-        # TODO(JyothsnaKS): Find a better way to return service_id for the remove button id
-        # Or perform check to ensure service name is unique
-        sql = "SELECT service_id from services where vendor_id=%s and service_name=%s"
-        args = ([vendor_id, service_name])
-        cursor.execute(sql,args)
-        results = cursor.fetchall()
-        service_id = results[0][0]
-        cursor.close()
-        return str(service_id)
-    redirect(url_for('index')) 
-
-@app.route('/removeservice', methods=['POST'])
-def removeservice():
-    if 'vendor_id' in session:
-        service_id = request.form['serviceid']
-        
-        cursor = db.cursor()
-        sql = "SELECT service_id from Bookings where service_id=%s"
-        args = ([service_id])
-        cursor.execute(sql,args)
-        results = cursor.fetchall()
-
-        # if the service has booking pending return false saying that service cannot be deleted
-        if results:
-            cursor.close()
-            return 'false'
-        else:
-            # Delete service from table
-            sql = "DELETE from services where service_id=%s"
-            args = ([service_id])
-            cursor.execute(sql,args)
-            db.commit()
-            cursor.close()
-            return 'true'
-
-    return redirect(url_for('index'))
-
-
 @app.route("/services")
 def services():
     if 'vendor_id' in session:
+        print(session)
         cursor = db.cursor()
-        sql = " SELECT service_type,price_per_unit,description,service_id from services cross join vendor where vendor.vendor_id=services.vendor_id and vendor.vendor_id=%s"
+        sql = " SELECT service_type,price_per_unit,description from services cross join vendor where vendor.vendor_id=services.vendor_id and vendor.vendor_id=%s"
         args = ([session['vendor_id']])
         cursor.execute(sql, args)
         results = cursor.fetchall()
@@ -390,8 +341,8 @@ def services():
             services[service_type] = dict()
             services[service_type]["price"] = str(row[1])
             services[service_type]["description"] = row[2]
-            services[service_type]["service_id"] = row[3]
-        return render_template("manage_services.html", services = services, name = session['name'])
+        print(services)
+        return render_template("manage_services.html", services = services)
     return redirect(url_for('index')) 
 
 @app.route("/cancelevent", methods=['POST'])
@@ -412,6 +363,97 @@ def cancelevent():
     if 'customer_id' in session:
         return redirect(url_for('home'))
     return redirect(url_for('index'))
+
+@app.route("/managevendor",methods = ['GET','POST'])
+def manage_vendor():
+    if 'vendor_id' in session:
+
+        # Query to get all events created assigned to a vendor
+        sql = "SELECT * FROM Events e,Bookings b where b.event_id=e.event_id and b.vendor_id=%s"
+        args = ([session['vendor_id']])
+
+        # Executing the query
+        cursor = db.cursor()
+        cursor.execute(sql,args)
+        results = cursor.fetchall()
+        cursor.close()
+
+        # Dictionary returned by this function which will hold the event related information for a customer
+        events =  dict()
+
+        # Collect event related information for a customer and store it as metadata temporarily
+        for row in results:
+            event_name = row[1]
+            events[event_name] = dict()
+            events[event_name]["meta"] = row
+
+        # For every event created by customer extract information - service type, vendor name and booking status
+        # by a cross join of bookings, vendor and services table
+        for event in events:
+            row = events[event]["meta"]
+
+            # TODO(JyothsnaKS): Replace this event id to ensure uniqueness
+            event_name = row[1]
+            # Uniquely identifies all events
+            events[event_name]["eventid"] = row[0]
+            # Scheduled data for the event
+            events[event_name]["date"] = row[5]
+            #service_id for acceptance/rejection
+            events[event_name]["serviceid"] = row[10]
+
+            # Event description for the events
+            events[event_name]["description"] = row[6]
+            
+            sql = "SELECT booking_status,first_name,service_type from bookings cross join customer,services where bookings.customer_id=customer.customer_id  and bookings.service_id=services.service_id and event_id=%s"
+            args = ([row[0]])
+
+            cursor = db.cursor()
+            cursor.execute(sql,args)
+            results = cursor.fetchall()
+            cursor.close()
+            vendors = dict()
+
+            # Added vendors and service information for a specific event to a dictionary
+            for subrow in results:
+                vendor_name = subrow[1]
+                vendors[vendor_name] = dict()
+                vendors[vendor_name]["service"] = subrow[2]
+
+                # 1 is for True when the vendor has confirmed service for an event
+                if subrow[0] == 1: 
+                    vendors[vendor_name]["status"] = "Confirmed"
+                    vendors[vendor_name]["color"] = "green"
+                elif subrow[0] == 2: 
+                    vendors[vendor_name]["status"] = "Rejected"
+                    vendors[vendor_name]["color"] = "red"
+                else:
+                    vendors[vendor_name]["status"] = "Waiting"
+                    vendors[vendor_name]["color"] = "orange"
+
+            events[event_name]["vendors"] = vendors
+
+            # Delete the metadata gathered earlier as this is no longer required
+            del events[event_name]["meta"]
+
+    return render_template('manage_vendor.html', name = session['name'], events = events)
+    #return render_template("manage_vendor.html")
+
+@app.route("/acceptrejectevent",methods=['GET','POST'])
+def rejectevent():
+    cursor = db.cursor()
+    sql = "UPDATE bookings set booking_status=%s where service_id=%s"
+    args = ([request.form['status'],request.form['serviceid']])
+    print(request.form['status'],request.form['serviceid'] )
+    cursor.execute(sql, args)
+    db.commit()
+    
+    cursor.close()
+    return redirect(url_for('manage_vendor'))
+    #I have no idea why the below is present. Keeping it to maintain consistency with cancel event 
+    if 'customer_id' in session:
+        return redirect(url_for('home'))
+    return redirect(url_for('index'))
+
 
 if __name__ == '__main__':
     # run!
