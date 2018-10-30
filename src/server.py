@@ -4,7 +4,8 @@
 from flask import Flask, flash,session, render_template, request, redirect, Response ,jsonify, json, url_for
 from werkzeug.security import generate_password_hash, check_password_hash
 import pymysql
-
+import smtplib 
+  
 app = Flask(__name__)
 app.secret_key = 'totally a secret lolz'
 # db = pymysql.connect("localhost", "root", "root", "SE_Project")
@@ -298,21 +299,31 @@ def create():
 
 @app.route('/contact')
 def contact():
-    '''This funnction shows the user the contact us page. Username will be displayed top right, 
+    '''This function shows the user the contact us page. Username will be displayed top right, 
    '''
-    # use render templeate functionality to automatically add name and other data 
+    # use render template functionality to automatically add name and other data 
     if 'name' in session:
         return render_template('contact.html', name = session['name'])
     return render_template('contact.html',name = "")
 
 @app.route('/contactSend', methods=['GET','POST'])
 def contacted():
-    '''This funnction shows the user the contact us page. Username will be displayed top right, 
+    '''This function shows the user the contact us page. Username will be displayed top right, 
    '''
-    # use render templeate functionality to automatically add name and other data 
+    # use render template functionality to automatically add name and other data 
     if 'name' in session:
+        # creates SMTP session
+        s = smtplib.SMTP('smtp.gmail.com',587)
+        # start TLS for security
+        s.starttls()
+        # Authentication 
+        s.login("alivedead068", "deadoraliveisasecret")
+        message = "Message from "+request.form['name']+"("+request.form['email']+")\n"+request.form['message']
+        s.sendmail("alivedead068", "alivedead068@gmail.com", message)
+        # terminating the session
+        s.quit() 
         return render_template('contacted.html', name = session['name'])
-    return render_template('contacted.html', name = "")
+    return render_template('index.html', name="")
 
 @app.route('/logout', methods=['POST','GET'])
 def logout():
