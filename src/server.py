@@ -9,7 +9,7 @@ import smtplib
 app = Flask(__name__)
 app.secret_key = 'totally a secret lolz'
 # db = pymysql.connect("localhost", "root", "root", "SE_Project")
-db = pymysql.connect("localhost", "root", "", "SE_Project", charset="latin1")
+db = pymysql.connect("localhost", "root", "root", "SE_Project", charset="latin1")
 cursor = db.cursor()
 
 
@@ -276,6 +276,9 @@ def home():
                 if subrow[0] == 1: 
                     vendors[vendor_name]["status"] = "Confirmed"
                     vendors[vendor_name]["color"] = "green"
+                elif subrow[0] == 2: 
+                    vendors[vendor_name]["status"] = "Rejected"
+                    vendors[vendor_name]["color"] = "red"
                 else:
                     vendors[vendor_name]["status"] = "Waiting"
                     vendors[vendor_name]["color"] = "orange"
@@ -423,6 +426,98 @@ def cancelevent():
     if 'customer_id' in session:
         return redirect(url_for('home'))
     return redirect(url_for('index'))
+
+
+@app.route("/managevendor",methods = ['GET','POST'])
+def manage_vendor():
+    if 'vendor_id' in session:
+
+        # Query to get all events created assigned to a vendor
+        sql = "SELECT * FROM Events e,Bookings b where b.event_id=e.event_id and b.vendor_id=%s"
+        args = ([session['vendor_id']])
+
+        # Executing the query
+        cursor = db.cursor()
+        cursor.execute(sql,args)
+        results = cursor.fetchall()
+        cursor.close()
+
+        # Dictionary returned by this function which will hold the event related information for a customer
+        events =  dict()
+
+        # Collect event related information for a customer and store it as metadata temporarily
+        for row in results:
+            event_name = row[1]
+            events[event_name] = dict()
+            events[event_name]["meta"] = row
+
+        # For every event created by customer extract information - service type, vendor name and booking status
+        # by a cross join of bookings, vendor and services table
+        for event in events:
+            row = events[event]["meta"]
+
+            # TODO(JyothsnaKS): Replace this event id to ensure uniqueness
+            event_name = row[1]
+            # Uniquely identifies all events
+            events[event_name]["eventid"] = row[0]
+            # Scheduled data for the event
+            events[event_name]["date"] = row[5]
+            #service_id for acceptance/rejection
+            events[event_name]["serviceid"] = row[10]
+
+            # Event description for the events
+            events[event_name]["description"] = row[6]
+            
+            sql = "SELECT booking_status,first_name,service_type from bookings cross join customer,services where bookings.customer_id=customer.customer_id  and bookings.service_id=services.service_id and event_id=%s"
+            args = ([row[0]])
+
+            cursor = db.cursor()
+            cursor.execute(sql,args)
+            results = cursor.fetchall()
+            cursor.close()
+            vendors = dict()
+
+            # Added vendors and service information for a specific event to a dictionary
+            for subrow in results:
+                vendor_name = subrow[1]
+                vendors[vendor_name] = dict()
+                vendors[vendor_name]["service"] = subrow[2]
+
+                # 1 is for True when the vendor has confirmed service for an event
+                if subrow[0] == 1: 
+                    vendors[vendor_name]["status"] = "Confirmed"
+                    vendors[vendor_name]["color"] = "green"
+                elif subrow[0] == 2: 
+                    vendors[vendor_name]["status"] = "Rejected"
+                    vendors[vendor_name]["color"] = "red"
+                else:
+                    vendors[vendor_name]["status"] = "Waiting"
+                    vendors[vendor_name]["color"] = "orange"
+
+            events[event_name]["vendors"] = vendors
+
+            # Delete the metadata gathered earlier as this is no longer required
+            del events[event_name]["meta"]
+
+    return render_template('manage_vendor.html', name = session['name'], events = events)
+    #return render_template("manage_vendor.html")
+
+@app.route("/acceptrejectevent",methods=['GET','POST'])
+def rejectevent():
+    cursor = db.cursor()
+    sql = "UPDATE bookings set booking_status=%s where service_id=%s"
+    args = ([request.form['status'],request.form['serviceid']])
+    print(request.form['status'],request.form['serviceid'] )
+    cursor.execute(sql, args)
+    db.commit()
+    
+    cursor.close()
+    return redirect(url_for('manage_vendor'))
+    #I have no idea why the below is present. Keeping it to maintain consistency with cancel event 
+    if 'customer_id' in session:
+        return redirect(url_for('home'))
+    return redirect(url_for('index'))
+
 
 if __name__ == '__main__':
 # run!
