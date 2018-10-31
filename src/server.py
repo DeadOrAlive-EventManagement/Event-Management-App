@@ -74,6 +74,7 @@ def do_register():
     pwd = request.form['loginPwd']
     vendor = request.form.get('vendor',False)
     hashed_pwd = generate_password_hash(pwd)
+    default_activation_status = False
 
     if vendor == 'on':
         sql = """SELECT * FROM vendor WHERE email=%s"""
@@ -90,8 +91,8 @@ def do_register():
         else:
             location = request.form['location']
 
-            sql = """INSERT INTO Vendor(email,vendor_name,phone_number,pwd,vendor_location) values(%s,%s,%s,%s,%s)"""        
-            args = (email,name,number,hashed_pwd,location)
+            sql = """INSERT INTO Vendor(email,vendor_name,phone_number,pwd,vendor_location,activation_status) values(%s,%s,%s,%s,%s,%s)"""        
+            args = (email,name,number,hashed_pwd,location,default_activation_status)
             cursor = db.cursor()
             cursor.execute(sql,args)
             db.commit()
@@ -118,13 +119,13 @@ def do_register():
             #Do appropriate error handling
             return redirect(url_for('index'))
         else:
-            sql = """INSERT INTO Customer(email,first_name,middle_name,last_name,phone_number,pwd) values(%s,%s,%s,%s,%s,%s)"""
+            sql = """INSERT INTO Customer(email,first_name,middle_name,last_name,phone_number,pwd,activation_status) values(%s,%s,%s,%s,%s,%s,%s)"""
             if(len(names) == 1):
-                args = (email,names[0],None,"",number,hashed_pwd)
+                args = (email,names[0],None,"",number,hashed_pwd,default_activation_status)
             elif(len(names) == 2):
-                args = (email,names[0],None,names[1],number,hashed_pwd)
+                args = (email,names[0],None,names[1],number,hashed_pwd,default_activation_status)
             else:
-                args = (email,names[0],names[1],names[2],number,hashed_pwd)
+                args = (email,names[0],names[1],names[2],number,hashed_pwd,default_activation_status)
 
             cursor = db.cursor()
             cursor.execute(sql,args)
@@ -140,7 +141,8 @@ def do_register():
 
             cursor.close()
 
-    # TODO(JyothsnaKS): Add a new column to customer,vendor table to check/update activation status of account
+    print('Useeeer id: ',uid)
+    # TODO: Fix bug when customer id is 1 we get id as 2 from activation URL
     confirmation_url = get_activation_link(uid)
 
     template_file = 'verify_mail_template.txt'
@@ -603,12 +605,24 @@ Activate user account
 @app.route('/activate/account/<payload>')
 def activate_user(payload):
     s = get_serializer()
+    cursor = db.cursor()
     try:
         user_id = s.loads(payload)
         if 'customer' in user_id:
-            uid = user_id.split('customer')[1] 
+            uid = user_id.split('customer')[1]
+            sql = "UPDATE customer set activation_status=1 where customer_id=%s"
+            args = ([uid])
+            cursor.execute(sql,args)
+            db.commit()
+            cursor.close()
+            print('User ID: ',user_id)
         else: 
             uid = user_id.split('vendor')[1] 
+            sql = "UPDATE vendor set activation_status=1 where vendor_id=%s"
+            args = ([uid])
+            cursor.execute(sql,args)
+            db.commit()
+            cursor.close()
     except BadSignature:
         abort(404)
     return redirect(url_for('registered'))

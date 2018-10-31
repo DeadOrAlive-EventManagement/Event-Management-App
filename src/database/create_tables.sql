@@ -18,7 +18,8 @@ CREATE TABLE Customer (
   middle_name varchar(20) DEFAULT NULL,
   last_name varchar(20) NOT NULL,
   phone_number varchar(13) DEFAULT 0000000000,
-  pwd varchar(100) NOT NULL
+  pwd varchar(100) NOT NULL,
+  activation_status boolean DEFAULT FALSE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 CREATE TABLE Events (
@@ -38,7 +39,8 @@ CREATE TABLE Vendor (
   vendor_location varchar(150) DEFAULT NULL,
   email varchar(100) UNIQUE,
   phone_number char(10) DEFAULT 0000000000,
-  pwd varchar(100) NOT NULL
+  pwd varchar(100) NOT NULL,
+  activation_status boolean DEFAULT FALSE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 CREATE TABLE Services (
