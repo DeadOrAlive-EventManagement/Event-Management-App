@@ -140,6 +140,7 @@ def do_register():
 
             cursor.close()
 
+    # TODO(JyothsnaKS): Add a new column to customer,vendor table to check/update activation status of account
     confirmation_url = get_activation_link(uid)
 
     template_file = 'verify_mail_template.txt'
