@@ -3,13 +3,19 @@
 # Please follow the following naming convention: long_function_name(var_one,var_two)
 from flask import Flask, flash,session, render_template, request, redirect, Response ,jsonify, json, url_for
 from werkzeug.security import generate_password_hash, check_password_hash
+from string import Template
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
 import pymysql
 import smtplib 
   
+COMPANY_EMAIL_ADDRESS = 'alivedead068@gmail.com'
+PASSWORD = 'deadoraliveisasecret'
+
 app = Flask(__name__)
 app.secret_key = 'totally a secret lolz'
 # db = pymysql.connect("localhost", "root", "root", "SE_Project")
-db = pymysql.connect("localhost", "root", "root", "SE_Project", charset="latin1")
+db = pymysql.connect("localhost", "root", "", "SE_Project", charset="latin1")
 cursor = db.cursor()
 
 
@@ -315,16 +321,15 @@ def contacted():
    '''
     # use render template functionality to automatically add name and other data 
     if 'name' in session:
-        # creates SMTP session
-        s = smtplib.SMTP('smtp.gmail.com',587)
-        # start TLS for security
-        s.starttls()
-        # Authentication 
-        s.login("alivedead068", "deadoraliveisasecret")
-        message = "Message from "+request.form['name']+"("+request.form['email']+")\n"+request.form['message']
-        s.sendmail("alivedead068", "alivedead068@gmail.com", message)
-        # terminating the session
-        s.quit() 
+        user_email = request.form['email']
+        # Create the email message body from template
+        message_template = read_template('support_template.txt')      
+        message = message_template.substitute(CUSTOMER_NAME=request.form['name'], USER_EMAIL=user_email, USER_MESSAGE=request.form['message'])
+        # Add subject to the email
+        subject = 'DeadOrAlive Support: ' + request.form['subject']
+        # Call email service
+        email_service(COMPANY_EMAIL_ADDRESS, subject, message)
+        
         return render_template('contacted.html', name = session['name'])
     return render_template('index.html', name="")
 
@@ -518,6 +523,36 @@ def rejectevent():
         return redirect(url_for('home'))
     return redirect(url_for('index'))
 
+'''
+Returns a Template object comprising the contents of the 
+file specified by filename.
+'''
+def read_template(filename):
+    with open(filename, 'r', encoding='utf-8') as template_file:
+        template_file_content = template_file.read()
+    return Template(template_file_content)
+
+'''
+Provides service to send email using SMTPlib and email MIMEMultipart
+'''
+def email_service(to_address, subject, message):
+    s = smtplib.SMTP('smtp.gmail.com',587)
+    s.starttls()
+    s.login(COMPANY_EMAIL_ADDRESS, PASSWORD)
+
+    # create a message
+    msg = MIMEMultipart() 
+
+    # setup the parameters of the message
+    msg['From'] = COMPANY_EMAIL_ADDRESS
+    msg['To'] = to_address
+    msg['Subject'] = subject       
+    # add in the message body
+    msg.attach(MIMEText(message, 'plain'))
+
+    s.send_message(msg)
+    del msg
+    s.quit()
 
 if __name__ == '__main__':
 # run!
