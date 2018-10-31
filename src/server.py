@@ -6,6 +6,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from string import Template
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+from itsdangerous import URLSafeSerializer, BadSignature
 import pymysql
 import smtplib 
   
@@ -94,6 +95,15 @@ def do_register():
             cursor = db.cursor()
             cursor.execute(sql,args)
             db.commit()
+
+            sql = """SELECT vendor_id,vendor_name FROM Vendor WHERE email=%s"""
+            args =([email])
+            cursor.execute(sql,args)
+            results = cursor.fetchall()
+            row = results[0]
+            name = row[1]
+            uid = 'vendor' + str(row[0])
+
             cursor.close()
     else:
         sql = """SELECT * FROM Customer WHERE email=%s"""
@@ -115,12 +125,37 @@ def do_register():
                 args = (email,names[0],None,names[1],number,hashed_pwd)
             else:
                 args = (email,names[0],names[1],names[2],number,hashed_pwd)
+
             cursor = db.cursor()
             cursor.execute(sql,args)
             db.commit()
+
+            sql = """SELECT customer_id, first_name FROM Customer WHERE email=%s"""
+            args =([email])
+            cursor.execute(sql,args)
+            results = cursor.fetchall()
+            row = results[0]
+            name = row[1]
+            uid = 'customer' + str(row[0])
+
             cursor.close()
-    # Using the redirect function because then the "/registered endpoint will show up, which makes more sense to user"
-    return redirect(url_for('registered'))
+
+    confirmation_url = get_activation_link(uid)
+
+    template_file = 'verify_mail_template.txt'
+    message_template = read_template(template_file)      
+    message = message_template.substitute(USER_NAME=name, CONFIRMATION_EMAIL=confirmation_url)
+    
+    subject = 'DeadOrAlive: Confirm your email'
+    
+    email_service(email, subject, message)
+    
+    # Using the redirect function because then the /unactivated endpoint will show up
+    return redirect(url_for('unactivated'))
+
+@app.route('/unactivated')
+def unactivated():
+    return render_template('unactivated.html')
 
 @app.route('/register')
 def register():
@@ -553,6 +588,37 @@ def email_service(to_address, subject, message):
     s.send_message(msg)
     del msg
     s.quit()
+
+'''
+Generate serializer using secret key 
+'''
+def get_serializer(secret_key=None):
+    secret_key = 'dxfxhfgcnvj'
+    return URLSafeSerializer(secret_key)
+
+'''
+Activate user account
+'''
+@app.route('/activate/account/<payload>')
+def activate_user(payload):
+    s = get_serializer()
+    try:
+        user_id = s.loads(payload)
+        if 'customer' in user_id:
+            uid = user_id.split('customer')[1] 
+        else: 
+            uid = user_id.split('vendor')[1] 
+    except BadSignature:
+        abort(404)
+    return redirect(url_for('registered'))
+
+'''
+Generating account verification URLs using user ID
+'''
+def get_activation_link(user_id):
+    s = get_serializer()
+    payload = s.dumps(user_id)
+    return url_for('activate_user', payload=payload, _external=True)
 
 if __name__ == '__main__':
 # run!
