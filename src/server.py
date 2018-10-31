@@ -141,7 +141,6 @@ def do_register():
 
             cursor.close()
 
-    print('Useeeer id: ',uid)
     # TODO: Fix bug when customer id is 1 we get id as 2 from activation URL
     confirmation_url = get_activation_link(uid)
 
@@ -182,7 +181,7 @@ def do_signin():
 
     # Check if customer exists
     cursor = db.cursor()
-    sql = "SELECT customer_id,first_name,pwd from Customer where email = %s"
+    sql = "SELECT customer_id,first_name,pwd,activation_status from Customer where email = %s"
     args = ([email])
     cursor.execute(sql,args)
     results = cursor.fetchall()
@@ -191,12 +190,15 @@ def do_signin():
     if results:
         row = results[0]
 
-        if(check_password_hash(row[2],pwd)):
+        if(check_password_hash(row[2],pwd) and row[3]==1):
             # do session stuff
             session.clear()
             session['customer_id'] = row[0]
             session['name'] = row[1]
             return "True"
+        elif row[3]==0:
+            session.clear()
+            return "inactive"
         else:
             # wrong password, tell user 
             session.clear()
@@ -204,7 +206,7 @@ def do_signin():
     
     # If we reach here, it means that the either the user is a vendor he has not registered with us yet
     cursor = db.cursor()
-    sql = "SELECT vendor_id,vendor_name,pwd from Vendor where email = %s"
+    sql = "SELECT vendor_id,vendor_name,pwd,activation_status from Vendor where email = %s"
     args = ([email])
     cursor.execute(sql,args)
     results = cursor.fetchall()
@@ -213,12 +215,15 @@ def do_signin():
     # Check if customer exists
     if results:
         row = results[0]
-        if(check_password_hash(row[2],pwd)):
+        if(check_password_hash(row[2],pwd) and row[3]==1):
             # do session stuff
             session.clear()
             session['vendor_id'] = row[0]
             session['name'] = row[1]
             return "True"
+        elif row[3]==0:
+            session.clear()
+            return "inactive"
         else:
             # wrong password, tell user 
             session.clear()
@@ -615,7 +620,6 @@ def activate_user(payload):
             cursor.execute(sql,args)
             db.commit()
             cursor.close()
-            print('User ID: ',user_id)
         else: 
             uid = user_id.split('vendor')[1] 
             sql = "UPDATE vendor set activation_status=1 where vendor_id=%s"
