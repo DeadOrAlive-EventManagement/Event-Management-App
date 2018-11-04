@@ -1,0 +1,7 @@
+Dear ${USER_NAME},
+
+Thank you for registering with us!
+
+Please verify your address by clicking on ${CONFIRMATION_EMAIL}
+
+If you're not ${USER_NAME} or didn't request verification, you can ignore this email. 

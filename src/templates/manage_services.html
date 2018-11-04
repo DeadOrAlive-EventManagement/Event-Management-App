@@ -152,7 +152,6 @@
 
         $('#saveChanges').attr('data-dismiss','modal');
 
-        // TODO(JyothsnaKS): Add unique id to 'REMOVE' button
         $.post("addservice", data, function(results){          
           $('#serviceList').append("<tr><td>"+service_type+"</td><td>"+description+"</td><td>"+price+"</td><td><button type=\"button\" class=\"btn btn-outline-primary btn-sm m-0 waves-effect\" serviceid=\""+results+"\" onclick=\"obj.removeService(event)\">Remove</button></td></tr>");
         });

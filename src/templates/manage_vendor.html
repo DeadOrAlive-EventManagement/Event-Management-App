@@ -67,17 +67,41 @@
 <script>
   obj = {
     accept_event: function(e) {
-      alert(e.target);
+      //alert(e.target);
       event_target = e.target;
       // Get event id from the target
       sid = event_target.getAttribute("serviceid").slice(5);
       status = event_target.getAttribute("status");
 
-      alert(status)
+      //alert(status)
       data = {serviceid: sid, status: status};
 
       // Call to server to delete the event and all related information
       $.post("acceptrejectevent", data, function(results) {
+
+        message = "Confirmed";
+        color = "green";
+        if(status == 2)
+        {
+          message = "Rejected";
+          color = "red";
+        }
+        
+        
+
+        
+
+        dets = event_target.parentElement.getElementsByTagName("span");
+        for(i=0;i<dets.length;i++)
+            {
+            dets[i].innerHTML = message;
+            dets[i].setAttribute("class","badge badge-pill "+color);
+            //alert(dets[i]);
+            }
+
+
+
+
 
         
       });

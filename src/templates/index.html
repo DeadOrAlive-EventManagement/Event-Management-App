@@ -175,13 +175,13 @@
                     // $("#SignIn").find(':submit').click();
                     console.log("In here");
                     // $("#SignIn").find(':submit').click();
-                } 
-                else if(pwd.val() == '') {
+                } else if(result == "inactive") {
+                    alert('Account has not been activated yet. Please use the activation URL sent to you mailbox');
+                } else if(pwd.val() == '') {
                     pwd[0].setCustomValidity('Please enter your Password');
                     $('#invalidPwd').html("Please enter your Password");
                     // $("#SignIn").find(':submit').click();
-                } 
-                else {
+                } else {
                     pwd[0].setCustomValidity('');
                 }
               })

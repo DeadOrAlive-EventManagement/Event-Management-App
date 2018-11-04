@@ -3,7 +3,15 @@
 # Please follow the following naming convention: long_function_name(var_one,var_two)
 from flask import Flask, flash,session, render_template, request, redirect, Response ,jsonify, json, url_for
 from werkzeug.security import generate_password_hash, check_password_hash
+from string import Template
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+from itsdangerous import URLSafeSerializer, BadSignature
 import pymysql
+import smtplib 
+  
+COMPANY_EMAIL_ADDRESS = 'alivedead068@gmail.com'
+PASSWORD = 'deadoraliveisasecret'
 
 app = Flask(__name__)
 app.secret_key = 'totally a secret lolz'
@@ -66,6 +74,7 @@ def do_register():
     pwd = request.form['loginPwd']
     vendor = request.form.get('vendor',False)
     hashed_pwd = generate_password_hash(pwd)
+    default_activation_status = False
 
     if vendor == 'on':
         sql = """SELECT * FROM vendor WHERE email=%s"""
@@ -82,11 +91,25 @@ def do_register():
         else:
             location = request.form['location']
 
+<<<<<<< HEAD
             sql = """INSERT INTO Vendor(email,vendor_name,phone_number,pwd,vendor_location) values(%s,%s,%s,%s,%s)"""
             args = (email,name,number,hashed_pwd,location)
+=======
+            sql = """INSERT INTO Vendor(email,vendor_name,phone_number,pwd,vendor_location,activation_status) values(%s,%s,%s,%s,%s,%s)"""        
+            args = (email,name,number,hashed_pwd,location,default_activation_status)
+>>>>>>> b3005571986dd8999487dbbf5a72a7ef0b9829c8
             cursor = db.cursor()
             cursor.execute(sql,args)
             db.commit()
+
+            sql = """SELECT vendor_id,vendor_name FROM Vendor WHERE email=%s"""
+            args =([email])
+            cursor.execute(sql,args)
+            results = cursor.fetchall()
+            row = results[0]
+            name = row[1]
+            uid = 'vendor' + str(row[0])
+
             cursor.close()
     else:
         sql = """SELECT * FROM Customer WHERE email=%s"""
@@ -101,19 +124,45 @@ def do_register():
             #Do appropriate error handling
             return redirect(url_for('index'))
         else:
-            sql = """INSERT INTO Customer(email,first_name,middle_name,last_name,phone_number,pwd) values(%s,%s,%s,%s,%s,%s)"""
+            sql = """INSERT INTO Customer(email,first_name,middle_name,last_name,phone_number,pwd,activation_status) values(%s,%s,%s,%s,%s,%s,%s)"""
             if(len(names) == 1):
-                args = (email,names[0],None,"",number,hashed_pwd)
+                args = (email,names[0],None,"",number,hashed_pwd,default_activation_status)
             elif(len(names) == 2):
-                args = (email,names[0],None,names[1],number,hashed_pwd)
+                args = (email,names[0],None,names[1],number,hashed_pwd,default_activation_status)
             else:
-                args = (email,names[0],names[1],names[2],number,hashed_pwd)
+                args = (email,names[0],names[1],names[2],number,hashed_pwd,default_activation_status)
+
             cursor = db.cursor()
             cursor.execute(sql,args)
             db.commit()
+
+            sql = """SELECT customer_id, first_name FROM Customer WHERE email=%s"""
+            args =([email])
+            cursor.execute(sql,args)
+            results = cursor.fetchall()
+            row = results[0]
+            name = row[1]
+            uid = 'customer' + str(row[0])
+
             cursor.close()
-    # Using the redirect function because then the "/registered endpoint will show up, which makes more sense to user"
-    return redirect(url_for('registered'))
+
+    # TODO: Fix bug when customer id is 1 we get id as 2 from activation URL
+    confirmation_url = get_activation_link(uid)
+
+    template_file = 'verify_mail_template.txt'
+    message_template = read_template(template_file)      
+    message = message_template.substitute(USER_NAME=name, CONFIRMATION_EMAIL=confirmation_url)
+    
+    subject = 'DeadOrAlive: Confirm your email'
+    
+    email_service(email, subject, message)
+    
+    # Using the redirect function because then the /unactivated endpoint will show up
+    return redirect(url_for('unactivated'))
+
+@app.route('/unactivated')
+def unactivated():
+    return render_template('unactivated.html')
 
 @app.route('/register')
 def register():
@@ -137,7 +186,7 @@ def do_signin():
 
     # Check if customer exists
     cursor = db.cursor()
-    sql = "SELECT customer_id,first_name,pwd from Customer where email = %s"
+    sql = "SELECT customer_id,first_name,pwd,activation_status from Customer where email = %s"
     args = ([email])
     cursor.execute(sql,args)
     results = cursor.fetchall()
@@ -146,12 +195,15 @@ def do_signin():
     if results:
         row = results[0]
 
-        if(check_password_hash(row[2],pwd)):
+        if(check_password_hash(row[2],pwd) and row[3]==1):
             # do session stuff
             session.clear()
             session['customer_id'] = row[0]
             session['name'] = row[1]
             return "True"
+        elif row[3]==0:
+            session.clear()
+            return "inactive"
         else:
             # wrong password, tell user
             session.clear()
@@ -159,7 +211,7 @@ def do_signin():
 
     # If we reach here, it means that the either the user is a vendor he has not registered with us yet
     cursor = db.cursor()
-    sql = "SELECT vendor_id,vendor_name,pwd from Vendor where email = %s"
+    sql = "SELECT vendor_id,vendor_name,pwd,activation_status from Vendor where email = %s"
     args = ([email])
     cursor.execute(sql,args)
     results = cursor.fetchall()
@@ -168,12 +220,15 @@ def do_signin():
     # Check if customer exists
     if results:
         row = results[0]
-        if(check_password_hash(row[2],pwd)):
+        if(check_password_hash(row[2],pwd) and row[3]==1):
             # do session stuff
             session.clear()
             session['vendor_id'] = row[0]
             session['name'] = row[1]
             return "True"
+        elif row[3]==0:
+            session.clear()
+            return "inactive"
         else:
             # wrong password, tell user
             session.clear()
@@ -225,8 +280,11 @@ def home():
         # Query to get all events created by a customer
         sql = "SELECT * FROM Events where customer_id=%s"
         args = ([session['customer_id']])
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> b3005571986dd8999487dbbf5a72a7ef0b9829c8
 
         # Executing the query
         cursor = db.cursor()
@@ -303,33 +361,107 @@ def create():
 
 @app.route('/contact')
 def contact():
+<<<<<<< HEAD
     '''This funnction shows the user the contact us page. Username will be displayed top right,
    '''
     # use render templeate functionality to automatically add name and other data
+=======
+    '''This function shows the user the contact us page. Username will be displayed top right, 
+   '''
+    # use render template functionality to automatically add name and other data 
+>>>>>>> b3005571986dd8999487dbbf5a72a7ef0b9829c8
     if 'name' in session:
         return render_template('contact.html', name = session['name'])
     return render_template('contact.html',name = "")
 
 @app.route('/contactSend', methods=['GET','POST'])
 def contacted():
+<<<<<<< HEAD
     '''This funnction shows the user the contact us page. Username will be displayed top right,
    '''
     # use render templeate functionality to automatically add name and other data
+=======
+    '''This function shows the user the contact us page. Username will be displayed top right, 
+   '''
+    # use render template functionality to automatically add name and other data 
+>>>>>>> b3005571986dd8999487dbbf5a72a7ef0b9829c8
     if 'name' in session:
+        user_email = request.form['email']
+        # Create the email message body from template
+        message_template = read_template('support_template.txt')      
+        message = message_template.substitute(CUSTOMER_NAME=request.form['name'], USER_EMAIL=user_email, USER_MESSAGE=request.form['message'])
+        # Add subject to the email
+        subject = 'DeadOrAlive Support: ' + request.form['subject']
+        # Call email service
+        email_service(COMPANY_EMAIL_ADDRESS, subject, message)
+        
         return render_template('contacted.html', name = session['name'])
-    return render_template('contacted.html', name = "")
+    return render_template('index.html', name="")
 
 @app.route('/logout', methods=['POST','GET'])
 def logout():
     session.clear()
     return redirect(url_for('index'))
 
+@app.route('/addservice', methods=['POST'])
+def addservice():
+    if 'vendor_id' in session:
+        vendor_id = session['vendor_id']
+        service_name = request.form['title']
+
+        cursor = db.cursor()
+        sql = "INSERT into services(vendor_id,service_name,price_per_unit,service_type,description) values (%s,%s,%s,%s,%s)"
+        args = (vendor_id,
+                service_name,
+                request.form['price'],
+                request.form['service_type'],
+                request.form['description'])
+        cursor.execute(sql, args)
+        db.commit()
+
+        # TODO(JyothsnaKS): Find a better way to return service_id for the remove button id
+        # Or perform check to ensure service name is unique
+        sql = "SELECT service_id from services where vendor_id=%s and service_name=%s"
+        args = ([vendor_id, service_name])
+        cursor.execute(sql,args)
+        results = cursor.fetchall()
+        service_id = results[0][0]
+        cursor.close()
+        return str(service_id)
+    redirect(url_for('index')) 
+
+@app.route('/removeservice', methods=['POST'])
+def removeservice():
+    if 'vendor_id' in session:
+        service_id = request.form['serviceid']
+        
+        cursor = db.cursor()
+        sql = "SELECT service_id from Bookings where service_id=%s"
+        args = ([service_id])
+        cursor.execute(sql,args)
+        results = cursor.fetchall()
+
+        # if the service has booking pending return false saying that service cannot be deleted
+        if results:
+            cursor.close()
+            return 'false'
+        else:
+            # Delete service from table
+            sql = "DELETE from services where service_id=%s"
+            args = ([service_id])
+            cursor.execute(sql,args)
+            db.commit()
+            cursor.close()
+            return 'true'
+
+    return redirect(url_for('index'))
+
+
 @app.route("/services")
 def services():
     if 'vendor_id' in session:
-        print(session)
         cursor = db.cursor()
-        sql = " SELECT service_type,price_per_unit,description from services cross join vendor where vendor.vendor_id=services.vendor_id and vendor.vendor_id=%s"
+        sql = " SELECT service_type,price_per_unit,description,service_id from services cross join vendor where vendor.vendor_id=services.vendor_id and vendor.vendor_id=%s"
         args = ([session['vendor_id']])
         cursor.execute(sql, args)
         results = cursor.fetchall()
@@ -342,9 +474,15 @@ def services():
             services[service_type] = dict()
             services[service_type]["price"] = str(row[1])
             services[service_type]["description"] = row[2]
+<<<<<<< HEAD
         print(services)
         return render_template("manage_services.html", services = services)
     return redirect(url_for('index'))
+=======
+            services[service_type]["service_id"] = row[3]
+        return render_template("manage_services.html", services = services, name = session['name'])
+    return redirect(url_for('index')) 
+>>>>>>> b3005571986dd8999487dbbf5a72a7ef0b9829c8
 
 @app.route("/cancelevent", methods=['POST'])
 def cancelevent():
@@ -364,6 +502,7 @@ def cancelevent():
     if 'customer_id' in session:
         return redirect(url_for('home'))
     return redirect(url_for('index'))
+
 
 @app.route("/managevendor",methods = ['GET','POST'])
 def manage_vendor():
@@ -454,6 +593,7 @@ def rejectevent():
     if 'customer_id' in session:
         return redirect(url_for('home'))
     return redirect(url_for('index'))
+<<<<<<< HEAD
 @app.route("/getvenue", methods=['POST'])
 def getvenue():
     print("IN THE FUNCTION WE WANT TO BE IN : GETVENUE");
@@ -588,7 +728,82 @@ def eventcreate():
     db.commit()
     cursor.close()
     return "true";
+=======
+
+'''
+Returns a Template object comprising the contents of the 
+file specified by filename.
+'''
+def read_template(filename):
+    with open(filename, 'r', encoding='utf-8') as template_file:
+        template_file_content = template_file.read()
+    return Template(template_file_content)
+
+'''
+Provides service to send email using SMTPlib and email MIMEMultipart
+'''
+def email_service(to_address, subject, message):
+    s = smtplib.SMTP('smtp.gmail.com',587)
+    s.starttls()
+    s.login(COMPANY_EMAIL_ADDRESS, PASSWORD)
+
+    # create a message
+    msg = MIMEMultipart() 
+
+    # setup the parameters of the message
+    msg['From'] = COMPANY_EMAIL_ADDRESS
+    msg['To'] = to_address
+    msg['Subject'] = subject       
+    # add in the message body
+    msg.attach(MIMEText(message, 'plain'))
+
+    s.send_message(msg)
+    del msg
+    s.quit()
+
+'''
+Generate serializer using secret key 
+'''
+def get_serializer(secret_key=None):
+    secret_key = 'dxfxhfgcnvj'
+    return URLSafeSerializer(secret_key)
+
+'''
+Activate user account
+'''
+@app.route('/activate/account/<payload>')
+def activate_user(payload):
+    s = get_serializer()
+    cursor = db.cursor()
+    try:
+        user_id = s.loads(payload)
+        if 'customer' in user_id:
+            uid = user_id.split('customer')[1]
+            sql = "UPDATE customer set activation_status=1 where customer_id=%s"
+            args = ([uid])
+            cursor.execute(sql,args)
+            db.commit()
+            cursor.close()
+        else: 
+            uid = user_id.split('vendor')[1] 
+            sql = "UPDATE vendor set activation_status=1 where vendor_id=%s"
+            args = ([uid])
+            cursor.execute(sql,args)
+            db.commit()
+            cursor.close()
+    except BadSignature:
+        abort(404)
+    return redirect(url_for('registered'))
+
+'''
+Generating account verification URLs using user ID
+'''
+def get_activation_link(user_id):
+    s = get_serializer()
+    payload = s.dumps(user_id)
+    return url_for('activate_user', payload=payload, _external=True)
+>>>>>>> b3005571986dd8999487dbbf5a72a7ef0b9829c8
 
 if __name__ == '__main__':
-    # run!
+# run!
     app.run(debug=True)
