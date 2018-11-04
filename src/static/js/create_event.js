@@ -1,72 +1,93 @@
-var currentTab = 0; // Current tab is set to be the first tab (0)
-showTab(currentTab); // Display the crurrent tab
+div_var1 = document.getElementById("first_info");
+div_var2 = document.getElementById("second_info");
+div_var3 = document.getElementById("third_info");
+div_var4 = document.getElementById("forth_info");
+div_var5 = document.getElementById("fifth_info");
+div_var6 = document.getElementById("sixth_info");
 
-function showTab(n) {
-  // This function will display the specified tab of the form...
-  var x = document.getElementsByClassName("tab");
-  x[n].style.display = "block";
-  //... and fix the Previous/Next buttons:
-  if (n == 0) {
-    document.getElementById("prevBtn").style.display = "none";
-  } else {
-    document.getElementById("prevBtn").style.display = "inline";
-  }
-  if (n == (x.length - 1)) {
-    document.getElementById("nextBtn").innerHTML = "Submit";
-  } else {
-    document.getElementById("nextBtn").innerHTML = "Next";
-  }
-  //... and run a function that will display the correct step indicator:
-  fixStepIndicator(n)
+
+btn_first_next = document.getElementById("first_next");
+btn_second_next = document.getElementById("second_next");
+btn_third_next = document.getElementById("third_next");
+btn_forth_next = document.getElementById("forth_next");
+btn_fifth_next = document.getElementById("fifth_next");
+
+btn_second_prev = document.getElementById("second_prev");
+btn_third_prev = document.getElementById("third_prev");
+btn_forth_prev = document.getElementById("forth_prev");
+btn_fifth_prev = document.getElementById("fifth_prev");
+
+
+btn_first_next.addEventListener("click", doNext1);
+function doNext1()
+{
+    div_var1.setAttribute("style", "display:none");
+    div_var2.setAttribute("style", "display:display");
+
 }
 
-function nextPrev(n) {
-  // This function will figure out which tab to display
-  var x = document.getElementsByClassName("tab");
-  // Exit the function if any field in the current tab is invalid:
-  if (n == 1 && !validateForm()) return false;
-  // Hide the current tab:
-  x[currentTab].style.display = "none";
-  // Increase or decrease the current tab by 1:
-  currentTab = currentTab + n;
-  // if you have reached the end of the form...
-  if (currentTab >= x.length) {
-    // ... the form gets submitted:
-    document.getElementById("regForm").submit();
-    return false;
-  }
-  // Otherwise, display the correct tab:
-  showTab(currentTab);
+
+
+btn_second_next.addEventListener("click", doNext2);
+function doNext2()
+{
+    div_var2.setAttribute("style", "display:none");
+    div_var3.setAttribute("style", "display:display");
+
 }
 
-function validateForm() {
-  // This function deals with validation of the form fields
-  var x, y, i, valid = true;
-  x = document.getElementsByClassName("tab");
-  y = x[currentTab].getElementsByTagName("input");
-  // A loop that checks every input field in the current tab:
-  for (i = 0; i < y.length; i++) {
-    // If a field is empty...
-    if (y[i].value == "") {
-      // add an "invalid" class to the field:
-      y[i].className += " invalid";
-      // and set the current valid status to false
-      valid = false;
-    }
-  }
-  // If the valid status is true, mark the step as finished and valid:
-  if (valid) {
-    document.getElementsByClassName("step")[currentTab].className += " finish";
-  }
-  return valid; // return the valid status
+btn_second_prev.addEventListener("click", doPrev2);
+function doPrev2()
+{
+    div_var2.setAttribute("style", "display:none");
+    div_var1.setAttribute("style", "display:display");
+
 }
 
-function fixStepIndicator(n) {
-  // This function removes the "active" class of all steps...
-  var i, x = document.getElementsByClassName("step");
-  for (i = 0; i < x.length; i++) {
-    x[i].className = x[i].className.replace(" active", "");
-  }
-  //... and adds the "active" class on the current step:
-  x[n].className += " active";
+btn_third_next.addEventListener("click", doNext3);
+function doNext3()
+{
+    div_var3.setAttribute("style", "display:none");
+    div_var4.setAttribute("style", "display:display");
+
+}
+
+btn_third_prev.addEventListener("click", doPrev3);
+function doPrev3()
+{
+    div_var3.setAttribute("style", "display:none");
+    div_var2.setAttribute("style", "display:display");
+
+}
+
+btn_forth_next.addEventListener("click", doNext4);
+function doNext4()
+{
+    div_var4.setAttribute("style", "display:none");
+    div_var5.setAttribute("style", "display:display");
+
+}
+
+btn_forth_prev.addEventListener("click", doPrev4);
+function doPrev4()
+{
+    div_var4.setAttribute("style", "display:none");
+    div_var3.setAttribute("style", "display:display");
+
+}
+
+btn_fifth_next.addEventListener("click", doNext5);
+function doNext5()
+{
+    div_var5.setAttribute("style", "display:none");
+    div_var6.setAttribute("style", "display:display");
+
+}
+
+btn_fifth_prev.addEventListener("click", doPrev5);
+function doPrev5()
+{
+    div_var5.setAttribute("style", "display:none");
+    div_var4.setAttribute("style", "display:display");
+
 }

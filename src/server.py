@@ -1,4 +1,4 @@
-# Decide whether to use SQLAlchemy (ORM) or MySQLdb (Might have to use a fork, MySQLDb does not have good python3 support) 
+# Decide whether to use SQLAlchemy (ORM) or MySQLdb (Might have to use a fork, MySQLDb does not have good python3 support)
 # For now going with pymysql as it is good enough and very similar to MySQLdb
 # Please follow the following naming convention: long_function_name(var_one,var_two)
 from flask import Flask, flash,session, render_template, request, redirect, Response ,jsonify, json, url_for
@@ -59,7 +59,7 @@ def check_email():
 def do_register():
     '''This function enters user details into the database, then shows the "You have registered! page'''
     # Get the values from the post form. Use generate_hash before saving for security reasons.
-    name = request.form['registerName'] 
+    name = request.form['registerName']
     names = name.split()
     email = request.form['loginEmail']
     number = request.form['registerPh']
@@ -82,7 +82,7 @@ def do_register():
         else:
             location = request.form['location']
 
-            sql = """INSERT INTO Vendor(email,vendor_name,phone_number,pwd,vendor_location) values(%s,%s,%s,%s,%s)"""        
+            sql = """INSERT INTO Vendor(email,vendor_name,phone_number,pwd,vendor_location) values(%s,%s,%s,%s,%s)"""
             args = (email,name,number,hashed_pwd,location)
             cursor = db.cursor()
             cursor.execute(sql,args)
@@ -153,10 +153,10 @@ def do_signin():
             session['name'] = row[1]
             return "True"
         else:
-            # wrong password, tell user 
+            # wrong password, tell user
             session.clear()
             return "False"
-    
+
     # If we reach here, it means that the either the user is a vendor he has not registered with us yet
     cursor = db.cursor()
     sql = "SELECT vendor_id,vendor_name,pwd from Vendor where email = %s"
@@ -175,7 +175,7 @@ def do_signin():
             session['name'] = row[1]
             return "True"
         else:
-            # wrong password, tell user 
+            # wrong password, tell user
             session.clear()
             return "False"
     # If we still reach here, it means that the user is not a registered one
@@ -225,7 +225,8 @@ def home():
         # Query to get all events created by a customer
         sql = "SELECT * FROM Events where customer_id=%s"
         args = ([session['customer_id']])
-        
+
+
 
         # Executing the query
         cursor = db.cursor()
@@ -256,7 +257,7 @@ def home():
 
             # Event description for the events
             events[event_name]["description"] = row[6]
-            
+
             sql = "SELECT booking_status,vendor_name,service_type from bookings cross join vendor,services where bookings.vendor_id=vendor.vendor_id and vendor.vendor_id=services.vendor_id and bookings.service_id=services.service_id and event_id=%s"
             args = ([row[0]])
 
@@ -273,10 +274,10 @@ def home():
                 vendors[vendor_name]["service"] = subrow[2]
 
                 # 1 is for True when the vendor has confirmed service for an event
-                if subrow[0] == 1: 
+                if subrow[0] == 1:
                     vendors[vendor_name]["status"] = "Confirmed"
                     vendors[vendor_name]["color"] = "green"
-                elif subrow[0] == 2: 
+                elif subrow[0] == 2:
                     vendors[vendor_name]["status"] = "Rejected"
                     vendors[vendor_name]["color"] = "red"
                 else:
@@ -293,27 +294,27 @@ def home():
 
 @app.route('/create')
 def create():
-    '''This funnction shows the user the create event page. Username will be displayed top right, 
+    '''This funnction shows the user the create event page. Username will be displayed top right,
     and all current events will be displayed on the page, dynamically.'''
-    # use render templeate functionality to automatically add name and other data 
+    # use render templeate functionality to automatically add name and other data
     if 'customer_id' in session:
         return render_template('create_event.html', name = session['name'])
     return redirect(url_for('index'))
 
 @app.route('/contact')
 def contact():
-    '''This funnction shows the user the contact us page. Username will be displayed top right, 
+    '''This funnction shows the user the contact us page. Username will be displayed top right,
    '''
-    # use render templeate functionality to automatically add name and other data 
+    # use render templeate functionality to automatically add name and other data
     if 'name' in session:
         return render_template('contact.html', name = session['name'])
     return render_template('contact.html',name = "")
 
 @app.route('/contactSend', methods=['GET','POST'])
 def contacted():
-    '''This funnction shows the user the contact us page. Username will be displayed top right, 
+    '''This funnction shows the user the contact us page. Username will be displayed top right,
    '''
-    # use render templeate functionality to automatically add name and other data 
+    # use render templeate functionality to automatically add name and other data
     if 'name' in session:
         return render_template('contacted.html', name = session['name'])
     return render_template('contacted.html', name = "")
@@ -343,11 +344,11 @@ def services():
             services[service_type]["description"] = row[2]
         print(services)
         return render_template("manage_services.html", services = services)
-    return redirect(url_for('index')) 
+    return redirect(url_for('index'))
 
 @app.route("/cancelevent", methods=['POST'])
 def cancelevent():
-    # TODO(JyothsnaKS): Perform checks on data and other condition to decide if customer is allowed 
+    # TODO(JyothsnaKS): Perform checks on data and other condition to decide if customer is allowed
     # to delete the event.
     cursor = db.cursor()
     sql = "DELETE from bookings where event_id=%s"
@@ -359,7 +360,7 @@ def cancelevent():
     cursor.execute(sql, args)
     db.commit()
     cursor.close()
-    
+
     if 'customer_id' in session:
         return redirect(url_for('home'))
     return redirect(url_for('index'))
@@ -403,7 +404,7 @@ def manage_vendor():
 
             # Event description for the events
             events[event_name]["description"] = row[6]
-            
+
             sql = "SELECT booking_status,first_name,service_type from bookings cross join customer,services where bookings.customer_id=customer.customer_id  and bookings.service_id=services.service_id and event_id=%s"
             args = ([row[0]])
 
@@ -420,10 +421,10 @@ def manage_vendor():
                 vendors[vendor_name]["service"] = subrow[2]
 
                 # 1 is for True when the vendor has confirmed service for an event
-                if subrow[0] == 1: 
+                if subrow[0] == 1:
                     vendors[vendor_name]["status"] = "Confirmed"
                     vendors[vendor_name]["color"] = "green"
-                elif subrow[0] == 2: 
+                elif subrow[0] == 2:
                     vendors[vendor_name]["status"] = "Rejected"
                     vendors[vendor_name]["color"] = "red"
                 else:
@@ -446,16 +447,148 @@ def rejectevent():
     print(request.form['status'],request.form['serviceid'] )
     cursor.execute(sql, args)
     db.commit()
-    
+
     cursor.close()
     return redirect(url_for('manage_vendor'))
-    #I have no idea why the below is present. Keeping it to maintain consistency with cancel event 
+    #I have no idea why the below is present. Keeping it to maintain consistency with cancel event
     if 'customer_id' in session:
         return redirect(url_for('home'))
     return redirect(url_for('index'))
+@app.route("/getvenue", methods=['POST'])
+def getvenue():
+    print("IN THE FUNCTION WE WANT TO BE IN : GETVENUE");
+    # value= int(request.form['value'])
+    # for i in request.form:
+    #     print(i)
+    data = request.get_json()
+    print(data)
+    # data = json.load(data);
+    print("HERE IS DATA --------------------->",data['value'])
+    cursor = db.cursor()
+    sql = "SELECT vendor_name, price_per_unit , s.description, service_id, vendor_id FROM Vendor v NATURAL JOIN Services s where s.service_type = 'Venue' and price_per_unit < %s" ;
+    args =([data['value']])
+    cursor.execute(sql,args)
+    results = cursor.fetchall()
+    cursor.close()
+    venues = dict()
+    for row in results:
+        venue_name = row[0]
+        venues[venue_name] = dict()
+        venues[venue_name]["price"] = str(row[1])
+        venues[venue_name]["description"] = row[2]
+        venues[venue_name]["service_id"]= row[3]
+        venues[venue_name]["vendor_id"]= row[4]
+    print(venues)
 
+    return json.dumps(venues);
+
+@app.route("/getdecorator", methods=['POST'])
+def getdecor():
+    print("IN THE FUNCTION WE WANT TO BE IN : GETDECOR");
+    # value= int(request.form['value'])
+    # for i in request.form:
+    #     print(i)
+    data = request.get_json()
+    print(data)
+    # data = json.load(data);
+    print("HERE IS DATA --------------------->",data['value'])
+    cursor = db.cursor()
+    sql = "SELECT vendor_name, price_per_unit , s.description, service_id , vendor_id FROM Vendor v NATURAL JOIN Services s where s.service_type = 'Decor' and price_per_unit < %s" ;
+    args =([data['value']])
+    cursor.execute(sql,args)
+    results = cursor.fetchall()
+    cursor.close()
+    decor = dict()
+    for row in results:
+        decor_name = row[0]
+        decor[decor_name] = dict()
+        decor[decor_name]["price"] = str(row[1])
+        decor[decor_name]["description"] = row[2]
+        decor[decor_name]["service_id"]= row[3]
+        decor[decor_name]["vendor_id"]= row[4]
+    # print(venues)
+    # print(json.dumps(decor));
+    return json.dumps(decor);
+
+@app.route("/getcaterer", methods=['POST'])
+def getcaterer():
+    print("IN THE FUNCTION WE WANT TO BE IN : GETCATERER");
+    # value= int(request.form['value'])
+    # for i in request.form:
+    #     print(i)
+    data = request.get_json()
+    print(data)
+    # data = json.load(data);
+    print("HERE IS DATA --------------------->",data['value'])
+    cursor = db.cursor()
+    sql = "SELECT vendor_name, price_per_unit , s.description, service_id ,vendor_id FROM Vendor v NATURAL JOIN Services s where s.service_type = 'Catering' and price_per_unit < %s" ;
+    args =([data['value']])
+    cursor.execute(sql,args)
+    results = cursor.fetchall()
+    cursor.close()
+    caterer = dict()
+    for row in results:
+        caterer_name = row[0]
+        caterer[caterer_name] = dict()
+        caterer[caterer_name]["price"] = str(row[1])
+        caterer[caterer_name]["description"] = row[2]
+        caterer[caterer_name]["service_id"]= row[3]
+        caterer[caterer_name]["vendor_id"]= row[4]
+    # print(venues)
+    # print(json.dumps(decor));
+    return json.dumps(caterer);
+
+# to create event
+@app.route("/eventcreate", methods=['POST'])
+def eventcreate():
+    print("IN THE FUNCTION WE WANT TO BE IN : EVENTCREATE");
+    # value= int(request.form['value'])
+    # for i in request.form:
+    #     print(i)
+    data = request.get_json()
+    print(data)
+    # data = json.load(data);
+    print("HERE IS DATA --------------------->",data['venueDetails']['venueId'],data['decorDetails']['decorId'],data['catererDetails']['catererId'])
+    print(int(data['venueDetails']['venueId']),int(data['decorDetails']['decorId']),int(data['catererDetails']['catererId']))
+    print(type(int(data['venueDetails']['venueId'])))
+    print(type(data['venueDetails']['venueId']))
+    # cursor = db.cursor()
+    sql_insert = "INSERT INTO Events(event_name,customer_id,budget,num_people,date_event,details) values(%s,%s,%s,%s,%s,%s)" ;
+    args = (data['eventType'],session['customer_id'],data['eventBudget'],data["numPeople"],data['eventDate'],data['eventDescription'])
+    print(args)
+    cursor = db.cursor()
+    cursor.execute(sql_insert,args)
+    db.commit()
+    sql_select = "SELECT event_id FROM Events where event_name =%s and customer_id= %s and budget= %s and num_people=%s and date_event=%s" ;
+    args=(data['eventType'],session['customer_id'],data['eventBudget'],data["numPeople"],data['eventDate'])
+    # args = (,,,,,data['eventDescription'])
+    print(args)
+    cursor.execute(sql_select,args)
+    results = cursor.fetchall()
+    event_id  = ""
+    for row in results:
+        event_id = str(row[0])
+    sql_insert = "INSERT INTO Bookings(event_id,vendor_id,customer_id,service_id,booking_status) values(%s,%s,%s,%s,%s)" ;
+    args = (event_id,data['venueDetails']['venueVendorId'],session['customer_id'],data['venueDetails']['venueId'],"Pending")
+    print(args)
+    cursor = db.cursor()
+    cursor.execute(sql_insert,args)
+    db.commit()
+    sql_insert = "INSERT INTO Bookings(event_id,vendor_id,customer_id,service_id,booking_status) values(%s,%s,%s,%s,%s)" ;
+    args = (event_id,data['decorDetails']['decorVendorId'],session['customer_id'],data['decorDetails']['decorId'],"Pending")
+    print(args)
+    cursor = db.cursor()
+    cursor.execute(sql_insert,args)
+    db.commit()
+    sql_insert = "INSERT INTO Bookings(event_id,vendor_id,customer_id,service_id,booking_status) values(%s,%s,%s,%s,%s)" ;
+    args = (event_id,data['catererDetails']['catererVendorId'],session['customer_id'],data['catererDetails']['catererId'],"Pending")
+    print(args)
+    cursor = db.cursor()
+    cursor.execute(sql_insert,args)
+    db.commit()
+    cursor.close()
+    return "true";
 
 if __name__ == '__main__':
     # run!
     app.run(debug=True)
-
