@@ -8,8 +8,8 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from itsdangerous import URLSafeSerializer, BadSignature
 import pymysql
-import smtplib 
-  
+import smtplib
+
 COMPANY_EMAIL_ADDRESS = 'alivedead068@gmail.com'
 PASSWORD = 'deadoraliveisasecret'
 
@@ -91,13 +91,8 @@ def do_register():
         else:
             location = request.form['location']
 
-<<<<<<< HEAD
-            sql = """INSERT INTO Vendor(email,vendor_name,phone_number,pwd,vendor_location) values(%s,%s,%s,%s,%s)"""
-            args = (email,name,number,hashed_pwd,location)
-=======
-            sql = """INSERT INTO Vendor(email,vendor_name,phone_number,pwd,vendor_location,activation_status) values(%s,%s,%s,%s,%s,%s)"""        
+            sql = """INSERT INTO Vendor(email,vendor_name,phone_number,pwd,vendor_location,activation_status) values(%s,%s,%s,%s,%s,%s)"""
             args = (email,name,number,hashed_pwd,location,default_activation_status)
->>>>>>> b3005571986dd8999487dbbf5a72a7ef0b9829c8
             cursor = db.cursor()
             cursor.execute(sql,args)
             db.commit()
@@ -150,13 +145,13 @@ def do_register():
     confirmation_url = get_activation_link(uid)
 
     template_file = 'verify_mail_template.txt'
-    message_template = read_template(template_file)      
+    message_template = read_template(template_file)
     message = message_template.substitute(USER_NAME=name, CONFIRMATION_EMAIL=confirmation_url)
-    
+
     subject = 'DeadOrAlive: Confirm your email'
-    
+
     email_service(email, subject, message)
-    
+
     # Using the redirect function because then the /unactivated endpoint will show up
     return redirect(url_for('unactivated'))
 
@@ -280,11 +275,6 @@ def home():
         # Query to get all events created by a customer
         sql = "SELECT * FROM Events where customer_id=%s"
         args = ([session['customer_id']])
-<<<<<<< HEAD
-
-
-=======
->>>>>>> b3005571986dd8999487dbbf5a72a7ef0b9829c8
 
         # Executing the query
         cursor = db.cursor()
@@ -361,40 +351,28 @@ def create():
 
 @app.route('/contact')
 def contact():
-<<<<<<< HEAD
-    '''This funnction shows the user the contact us page. Username will be displayed top right,
+    '''This function shows the user the contact us page. Username will be displayed top right,
    '''
-    # use render templeate functionality to automatically add name and other data
-=======
-    '''This function shows the user the contact us page. Username will be displayed top right, 
-   '''
-    # use render template functionality to automatically add name and other data 
->>>>>>> b3005571986dd8999487dbbf5a72a7ef0b9829c8
+    # use render template functionality to automatically add name and other data
     if 'name' in session:
         return render_template('contact.html', name = session['name'])
     return render_template('contact.html',name = "")
 
 @app.route('/contactSend', methods=['GET','POST'])
 def contacted():
-<<<<<<< HEAD
-    '''This funnction shows the user the contact us page. Username will be displayed top right,
+    '''This function shows the user the contact us page. Username will be displayed top right,
    '''
-    # use render templeate functionality to automatically add name and other data
-=======
-    '''This function shows the user the contact us page. Username will be displayed top right, 
-   '''
-    # use render template functionality to automatically add name and other data 
->>>>>>> b3005571986dd8999487dbbf5a72a7ef0b9829c8
+    # use render template functionality to automatically add name and other data
     if 'name' in session:
         user_email = request.form['email']
         # Create the email message body from template
-        message_template = read_template('support_template.txt')      
+        message_template = read_template('support_template.txt')
         message = message_template.substitute(CUSTOMER_NAME=request.form['name'], USER_EMAIL=user_email, USER_MESSAGE=request.form['message'])
         # Add subject to the email
         subject = 'DeadOrAlive Support: ' + request.form['subject']
         # Call email service
         email_service(COMPANY_EMAIL_ADDRESS, subject, message)
-        
+
         return render_template('contacted.html', name = session['name'])
     return render_template('index.html', name="")
 
@@ -428,13 +406,13 @@ def addservice():
         service_id = results[0][0]
         cursor.close()
         return str(service_id)
-    redirect(url_for('index')) 
+    redirect(url_for('index'))
 
 @app.route('/removeservice', methods=['POST'])
 def removeservice():
     if 'vendor_id' in session:
         service_id = request.form['serviceid']
-        
+
         cursor = db.cursor()
         sql = "SELECT service_id from Bookings where service_id=%s"
         args = ([service_id])
@@ -474,15 +452,9 @@ def services():
             services[service_type] = dict()
             services[service_type]["price"] = str(row[1])
             services[service_type]["description"] = row[2]
-<<<<<<< HEAD
-        print(services)
-        return render_template("manage_services.html", services = services)
-    return redirect(url_for('index'))
-=======
             services[service_type]["service_id"] = row[3]
         return render_template("manage_services.html", services = services, name = session['name'])
-    return redirect(url_for('index')) 
->>>>>>> b3005571986dd8999487dbbf5a72a7ef0b9829c8
+    return redirect(url_for('index'))
 
 @app.route("/cancelevent", methods=['POST'])
 def cancelevent():
@@ -593,7 +565,80 @@ def rejectevent():
     if 'customer_id' in session:
         return redirect(url_for('home'))
     return redirect(url_for('index'))
-<<<<<<< HEAD
+
+'''
+Returns a Template object comprising the contents of the
+file specified by filename.
+'''
+def read_template(filename):
+    with open(filename, 'r', encoding='utf-8') as template_file:
+        template_file_content = template_file.read()
+    return Template(template_file_content)
+
+'''
+Provides service to send email using SMTPlib and email MIMEMultipart
+'''
+def email_service(to_address, subject, message):
+    s = smtplib.SMTP('smtp.gmail.com',587)
+    s.starttls()
+    s.login(COMPANY_EMAIL_ADDRESS, PASSWORD)
+
+    # create a message
+    msg = MIMEMultipart()
+
+    # setup the parameters of the message
+    msg['From'] = COMPANY_EMAIL_ADDRESS
+    msg['To'] = to_address
+    msg['Subject'] = subject
+    # add in the message body
+    msg.attach(MIMEText(message, 'plain'))
+
+    s.send_message(msg)
+    del msg
+    s.quit()
+
+'''
+Generate serializer using secret key
+'''
+def get_serializer(secret_key=None):
+    secret_key = 'dxfxhfgcnvj'
+    return URLSafeSerializer(secret_key)
+
+'''
+Activate user account
+'''
+@app.route('/activate/account/<payload>')
+def activate_user(payload):
+    s = get_serializer()
+    cursor = db.cursor()
+    try:
+        user_id = s.loads(payload)
+        if 'customer' in user_id:
+            uid = user_id.split('customer')[1]
+            sql = "UPDATE customer set activation_status=1 where customer_id=%s"
+            args = ([uid])
+            cursor.execute(sql,args)
+            db.commit()
+            cursor.close()
+        else:
+            uid = user_id.split('vendor')[1]
+            sql = "UPDATE vendor set activation_status=1 where vendor_id=%s"
+            args = ([uid])
+            cursor.execute(sql,args)
+            db.commit()
+            cursor.close()
+    except BadSignature:
+        abort(404)
+    return redirect(url_for('registered'))
+
+'''
+Generating account verification URLs using user ID
+'''
+def get_activation_link(user_id):
+    s = get_serializer()
+    payload = s.dumps(user_id)
+    return url_for('activate_user', payload=payload, _external=True)
+
 @app.route("/getvenue", methods=['POST'])
 def getvenue():
     print("IN THE FUNCTION WE WANT TO BE IN : GETVENUE");
@@ -728,81 +773,6 @@ def eventcreate():
     db.commit()
     cursor.close()
     return "true";
-=======
-
-'''
-Returns a Template object comprising the contents of the 
-file specified by filename.
-'''
-def read_template(filename):
-    with open(filename, 'r', encoding='utf-8') as template_file:
-        template_file_content = template_file.read()
-    return Template(template_file_content)
-
-'''
-Provides service to send email using SMTPlib and email MIMEMultipart
-'''
-def email_service(to_address, subject, message):
-    s = smtplib.SMTP('smtp.gmail.com',587)
-    s.starttls()
-    s.login(COMPANY_EMAIL_ADDRESS, PASSWORD)
-
-    # create a message
-    msg = MIMEMultipart() 
-
-    # setup the parameters of the message
-    msg['From'] = COMPANY_EMAIL_ADDRESS
-    msg['To'] = to_address
-    msg['Subject'] = subject       
-    # add in the message body
-    msg.attach(MIMEText(message, 'plain'))
-
-    s.send_message(msg)
-    del msg
-    s.quit()
-
-'''
-Generate serializer using secret key 
-'''
-def get_serializer(secret_key=None):
-    secret_key = 'dxfxhfgcnvj'
-    return URLSafeSerializer(secret_key)
-
-'''
-Activate user account
-'''
-@app.route('/activate/account/<payload>')
-def activate_user(payload):
-    s = get_serializer()
-    cursor = db.cursor()
-    try:
-        user_id = s.loads(payload)
-        if 'customer' in user_id:
-            uid = user_id.split('customer')[1]
-            sql = "UPDATE customer set activation_status=1 where customer_id=%s"
-            args = ([uid])
-            cursor.execute(sql,args)
-            db.commit()
-            cursor.close()
-        else: 
-            uid = user_id.split('vendor')[1] 
-            sql = "UPDATE vendor set activation_status=1 where vendor_id=%s"
-            args = ([uid])
-            cursor.execute(sql,args)
-            db.commit()
-            cursor.close()
-    except BadSignature:
-        abort(404)
-    return redirect(url_for('registered'))
-
-'''
-Generating account verification URLs using user ID
-'''
-def get_activation_link(user_id):
-    s = get_serializer()
-    payload = s.dumps(user_id)
-    return url_for('activate_user', payload=payload, _external=True)
->>>>>>> b3005571986dd8999487dbbf5a72a7ef0b9829c8
 
 if __name__ == '__main__':
 # run!
