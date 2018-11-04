@@ -615,20 +615,20 @@ def activate_user(payload):
         user_id = s.loads(payload)
         if 'customer' in user_id:
             uid = user_id.split('customer')[1]
-            sql = "UPDATE customer set activation_status=1 where customer_id=%s"
+            sql = "UPDATE Customer set activation_status=1 where customer_id=%s"
             args = ([uid])
             cursor.execute(sql,args)
             db.commit()
             cursor.close()
         else:
             uid = user_id.split('vendor')[1]
-            sql = "UPDATE vendor set activation_status=1 where vendor_id=%s"
+            sql = "UPDATE Vendor set activation_status=1 where vendor_id=%s"
             args = ([uid])
             cursor.execute(sql,args)
             db.commit()
             cursor.close()
     except BadSignature:
-        abort(404)
+            return abort(404)
     return redirect(url_for('registered'))
 
 '''

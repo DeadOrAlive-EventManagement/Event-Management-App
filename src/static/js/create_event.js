@@ -19,10 +19,69 @@ btn_fifth_prev = document.getElementById("fifth_prev");
 
 
 btn_first_next.addEventListener("click", doNext1);
+obj = {
+    stopSubmission: function() {
+         'use strict';
+         window.addEventListener('load', function() {
+         // Fetch all the forms we want to apply custom Bootstrap validation styles to
+         var forms = document.getElementsByClassName('needs-validation');
+         // Loop over them and prevent submission
+         this.console.log("StopSubmission")
+         var validation = Array.prototype.filter.call(forms, function(form) {
+         form.addEventListener('submit', function(event) {
+             if (form.checkValidity() === false) {
+                 event.preventDefault();
+                 event.stopPropagation();
+             }
+             form.classList.add('was-validated');
+         }, false);
+         });
+     }, false);
+    }
+}
+obj.stopSubmission();
+function checkValid()
+{
+    alert("checkValid");
+    number = document.getElementById("num_people")
+    budget= document.getElementById("datepicker")
+    date = document.getElementById("budget")
+    flag = true;
+    if(!number.checkValidity())
+    {
+        number.setCustomValidity('Please input a valid number.')
+        flag = false;
+    }    
+    else
+        number.setCustomValidity('')
+    if(!budget.checkValidity())
+    {
+        budget.setCustomValidity('Please input a valid budget')
+        flag = false;
+    }    
+    else
+        budget.setCustomValidity('')
+    if(!date.checkValidity())
+    {
+        date.setCustomValidity('Please input a valid date')
+        flag = false;
+    }    
+    else
+        date.setCustomValidity('')
+    return flag;
+}
 function doNext1()
 {
-    div_var1.setAttribute("style", "display:none");
-    div_var2.setAttribute("style", "display:display");
+    if(checkValid())
+    {
+        div_var1.setAttribute("style", "display:none");
+        div_var2.setAttribute("style", "display:display");
+    }
+    else{
+        myForm = $("#regForm")
+        myForm.find(':submit').click();
+    }
+    
 
 }
 
