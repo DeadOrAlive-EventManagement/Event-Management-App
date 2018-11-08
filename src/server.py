@@ -734,9 +734,9 @@ def eventcreate():
     print(data)
     # data = json.load(data);
     print("HERE IS DATA --------------------->",data['venueDetails']['venueId'],data['decorDetails']['decorId'],data['catererDetails']['catererId'])
-    print(int(data['venueDetails']['venueId']),int(data['decorDetails']['decorId']),int(data['catererDetails']['catererId']))
-    print(type(int(data['venueDetails']['venueId'])))
-    print(type(data['venueDetails']['venueId']))
+    # print(int(data['venueDetails']['venueId']),int(data['decorDetails']['decorId']),int(data['catererDetails']['catererId']))
+    # print(type(int(data['venueDetails']['venueId'])))
+    # print(type(data['venueDetails']['venueId']))
     # cursor = db.cursor()
     sql_insert = "INSERT INTO Events(event_name,customer_id,budget,num_people,date_event,details) values(%s,%s,%s,%s,%s,%s)" ;
     args = (data['eventType'],session['customer_id'],data['eventBudget'],data["numPeople"],data['eventDate'],data['eventDescription'])
@@ -753,24 +753,27 @@ def eventcreate():
     event_id  = ""
     for row in results:
         event_id = str(row[0])
-    sql_insert = "INSERT INTO Bookings(event_id,vendor_id,customer_id,service_id,booking_status) values(%s,%s,%s,%s,%s)" ;
-    args = (event_id,data['venueDetails']['venueVendorId'],session['customer_id'],data['venueDetails']['venueId'],"Pending")
-    print(args)
-    cursor = db.cursor()
-    cursor.execute(sql_insert,args)
-    db.commit()
-    sql_insert = "INSERT INTO Bookings(event_id,vendor_id,customer_id,service_id,booking_status) values(%s,%s,%s,%s,%s)" ;
-    args = (event_id,data['decorDetails']['decorVendorId'],session['customer_id'],data['decorDetails']['decorId'],"Pending")
-    print(args)
-    cursor = db.cursor()
-    cursor.execute(sql_insert,args)
-    db.commit()
-    sql_insert = "INSERT INTO Bookings(event_id,vendor_id,customer_id,service_id,booking_status) values(%s,%s,%s,%s,%s)" ;
-    args = (event_id,data['catererDetails']['catererVendorId'],session['customer_id'],data['catererDetails']['catererId'],"Pending")
-    print(args)
-    cursor = db.cursor()
-    cursor.execute(sql_insert,args)
-    db.commit()
+    if(data['venueDetails']['venueVendorId']!=''):
+        sql_insert = "INSERT INTO Bookings(event_id,vendor_id,customer_id,service_id,booking_status) values(%s,%s,%s,%s,%s)" ;
+        args = (event_id,data['venueDetails']['venueVendorId'],session['customer_id'],data['venueDetails']['venueId'],"Pending")
+        print(args)
+        cursor = db.cursor()
+        cursor.execute(sql_insert,args)
+        db.commit()
+    if(data['decorDetails']['decorVendorId']!=''):
+        sql_insert = "INSERT INTO Bookings(event_id,vendor_id,customer_id,service_id,booking_status) values(%s,%s,%s,%s,%s)" ;
+        args = (event_id,data['decorDetails']['decorVendorId'],session['customer_id'],data['decorDetails']['decorId'],"Pending")
+        print(args)
+        cursor = db.cursor()
+        cursor.execute(sql_insert,args)
+        db.commit()
+    if(data['catererDetails']['catererVendorId']!=''):
+        sql_insert = "INSERT INTO Bookings(event_id,vendor_id,customer_id,service_id,booking_status) values(%s,%s,%s,%s,%s)" ;
+        args = (event_id,data['catererDetails']['catererVendorId'],session['customer_id'],data['catererDetails']['catererId'],"Pending")
+        print(args)
+        cursor = db.cursor()
+        cursor.execute(sql_insert,args)
+        db.commit()
     cursor.close()
     return "true";
 

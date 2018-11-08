@@ -5,6 +5,7 @@ angular.module('getData',[]).controller('ctrl',['$http','$scope',function($http,
     self.eventType="";
     self.numPeople="";
     self.eventDate="";
+    // self.ven_dets ="";
     self.eventDescription="";
     self.eventBudget=0;
     self.venueDetails={venueId:"",venuePrice:"",venueVendorId:""};
@@ -19,7 +20,7 @@ angular.module('getData',[]).controller('ctrl',['$http','$scope',function($http,
         self.eventBudget = angular.element('#budget').val();
         self.numPeople = angular.element('#num_people').val();
         self.eventType = angular.element('#event_type').val();
-        self.eventDate = angular.element('#datepicker').val();
+        self.eventDate = angular.element('#dt_ev').val();
 
 
         // console.log(obj.eventBudget);
@@ -68,13 +69,15 @@ angular.module('getData',[]).controller('ctrl',['$http','$scope',function($http,
         console.log(self.eventDescription);
     }
     $scope.getDecorator = function ()    {
-
-        ven_dets = $('input[name=venue]:checked').val();
-        ven_dets = ven_dets.split(" ");
-        self.venueDetails['venueId']= Number(ven_dets[0]);
-        self.venueDetails['venueVendorId']= Number(ven_dets[1]);
-        self.venueDetails["venuePrice"]=Number(ven_dets[2]);
-
+        if($('input[name=venue]:checked').val()!= undefined)
+        {
+            console.log($('input[name=venue]:checked').val());
+            ven_dets = $('input[name=venue]:checked').val();
+            ven_dets = ven_dets.split(" ");
+            self.venueDetails['venueId']= Number(ven_dets[0]);
+            self.venueDetails['venueVendorId']= Number(ven_dets[1]);
+            self.venueDetails["venuePrice"]=Number(ven_dets[2]);
+        }
         // self.budget = angular.element('#budget').val()
         data = JSON.stringify({'value':self.eventBudget});
         alert(self.eventBudget);
@@ -109,11 +112,14 @@ angular.module('getData',[]).controller('ctrl',['$http','$scope',function($http,
         } , function(error){console.log(error);});
     }
     $scope.getCaterer = function ()    {
-        dec_dets = $('input[name=venue]:checked').val();
-        dec_dets = dec_dets.split(" ");
-        self.decorDetails['decorId']= Number(dec_dets[0]);
-        self.venueDetails['decorVendorId']= Number(dec_dets[1]);
-        self.decorDetails["decorPrice"]=Number(dec_dets[2]);
+        if($('input[name=decor]:checked').val()!= undefined)
+        {
+            dec_dets = $('input[name=decor]:checked').val();
+            dec_dets = dec_dets.split(" ");
+            self.decorDetails['decorId']= Number(dec_dets[0]);
+            self.venueDetails['decorVendorId']= Number(dec_dets[1]);
+            self.decorDetails["decorPrice"]=Number(dec_dets[2]);
+        }
         // self.budget = angular.element('#budget').val()
         data = JSON.stringify({'value':self.eventBudget});
         alert(self.eventBudget);
@@ -149,11 +155,14 @@ angular.module('getData',[]).controller('ctrl',['$http','$scope',function($http,
     }
     $scope.setCaterer = function()
     {
-        cat_dets = $('input[name=caterer]:checked').val();
-        cat_dets = cat_dets.split(" ");
-        self.catererDetails['catererId']= Number(cat_dets[0]);
-        self.venueDetails['catererVendorId']= Number(cat_dets[1]);
-        self.catererDetails["catererPrice"]=Number(cat_dets[2]);
+        if($('input[name=caterer]:checked').val()!= undefined)
+        {
+            cat_dets = $('input[name=caterer]:checked').val();
+            cat_dets = cat_dets.split(" ");
+            self.catererDetails['catererId']= Number(cat_dets[0]);
+            self.venueDetails['catererVendorId']= Number(cat_dets[1]);
+            self.catererDetails["catererPrice"]=Number(cat_dets[2]);
+        }
     }
     $scope.sendToServer = function()
     {

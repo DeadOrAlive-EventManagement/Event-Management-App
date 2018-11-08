@@ -43,29 +43,30 @@ obj.stopSubmission();
 function checkValid()
 {
     alert("checkValid");
-    number = document.getElementById("num_people")
-    budget= document.getElementById("datepicker")
-    date = document.getElementById("budget")
+    number = document.getElementById("num_people");
+    budget=  document.getElementById("dt_ev");
+    date = document.getElementById("budget");
     flag = true;
+    console.log("number "+ typeof number);
     if(!number.checkValidity())
     {
         number.setCustomValidity('Please input a valid number.')
         flag = false;
-    }    
+    }
     else
         number.setCustomValidity('')
     if(!budget.checkValidity())
     {
         budget.setCustomValidity('Please input a valid budget')
         flag = false;
-    }    
+    }
     else
         budget.setCustomValidity('')
     if(!date.checkValidity())
     {
         date.setCustomValidity('Please input a valid date')
         flag = false;
-    }    
+    }
     else
         date.setCustomValidity('')
     return flag;
@@ -81,7 +82,7 @@ function doNext1()
         myForm = $("#regForm")
         myForm.find(':submit').click();
     }
-    
+
 
 }
 
