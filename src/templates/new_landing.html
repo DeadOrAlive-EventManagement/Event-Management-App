@@ -5,15 +5,15 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <title>Material Design Bootstrap</title>
+    <title>Event Manager</title>  <!-- For final deployment, change url_for to CDN urls -->
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <!-- Bootstrap core CSS -->
-    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href= "{{ url_for('static',filename = 'css/bootstrap.min.css')}}" rel="stylesheet">
     <!-- Material Design Bootstrap -->
-    <link href="css/mdb.min.css" rel="stylesheet">
+    <link href="{{ url_for('static',filename = 'css/mdb.min.css')}}" rel="stylesheet">
     <!-- Your custom styles (optional) -->
-    <link href="css/style.min.css" rel="stylesheet">
+    <link href="{{ url_for('static',filename = 'css/style.css')}}" rel="stylesheet">
     <style type="text/css">
 
       html,
@@ -94,7 +94,7 @@
 
         <ul class="navbar-nav my-0">
           <li class="nav-item">
-              <a class="nav-link" href="#">Sign In</a>
+              <a class="nav-link" href="/signin">Sign In</a>
           </li>
           </ul>
       </div>
@@ -119,7 +119,7 @@
 
       <!--First slide-->
       <div class="carousel-item active">
-        <div class="view" style="background-image: url('birthday1.jpg'); background-repeat: no-repeat; background-size: cover;">
+        <div class="view" style="background-image: url({{ url_for('static',filename = 'img/birthday1.jpg')}}); background-repeat: no-repeat; background-size: cover;">
 
           <!-- Mask & flexbox options-->
           <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
@@ -139,7 +139,7 @@
                   available. Create your own, stunning website.</strong>
               </p> -->
 
-              <a target="_blank" href="https://mdbootstrap.com/education/bootstrap/" class="btn btn-outline-white btn-lg">Create your account now
+              <a target="_blank" href="/register" class="btn btn-outline-white btn-lg">Create your account now
                 <!-- <i class="fa fa-graduation-cap ml-2"></i> -->
               </a>
             </div>
@@ -154,7 +154,7 @@
 
       <!--Second slide-->
       <div class="carousel-item">
-        <div class="view" style="background-image: url('wedding.jpg'); background-repeat: no-repeat; background-size: cover;">
+        <div class="view" style="background-image: url({{ url_for('static',filename = 'img/wedding.jpg')}}); background-repeat: no-repeat; background-size: cover;">
 
           <!-- Mask & flexbox options-->
           <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
@@ -174,7 +174,7 @@
                   available. Create your own, stunning website.</strong>
               </p> -->
 
-              <a target="_blank" href="https://mdbootstrap.com/education/bootstrap/" class="btn btn-outline-white btn-lg">Create your account now
+              <a target="_blank" href="/register" class="btn btn-outline-white btn-lg">Create your account now
                 <!-- <i class="fa fa-graduation-cap ml-2"></i> -->
               </a>
             </div>
@@ -189,7 +189,7 @@
 
       <!--Third slide-->
       <div class="carousel-item">
-        <div class="view" style="background-image: url('family.jpg'); background-repeat: no-repeat; background-size: cover;">
+        <div class="view" style="background-image: url({{ url_for('static',filename = 'img/family.jpg')}}); background-repeat: no-repeat; background-size: cover;">
 
           <!-- Mask & flexbox options-->
           <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
@@ -209,7 +209,7 @@
                   available. Create your own, stunning website.</strong>
               </p> -->
 
-              <a target="_blank" href="https://mdbootstrap.com/education/bootstrap/" class="btn btn-outline-white btn-lg">Create your account now
+              <a target="_blank" href="/register" class="btn btn-outline-white btn-lg">Create your account now
                 <!-- <i class="fa fa-graduation-cap ml-2"></i> -->
               </a>
             </div>
@@ -252,7 +252,7 @@
           <!--Grid column-->
           <div class="col-md-6 mb-4">
 
-            <img src="create_event.png" class="img-fluid z-depth-1-half" alt="">
+            <img src=" {{ url_for('static',filename = 'img/create_event.png')}}" class="img-fluid z-depth-1-half" alt="">
 
           </div>
           <!--Grid column-->
@@ -279,7 +279,7 @@
             </p>
 
             <!-- CTA -->
-            <a target="_blank" href="https://mdbootstrap.com/getting-started/" class="btn btn-indigo btn-md">Sign Up
+            <a target="_blank" href="/register" class="btn btn-indigo btn-md">Sign Up
             </a>
 
           </div>
@@ -351,7 +351,7 @@
           <!--Grid column-->
           <div class="col-lg-6 col-md-12">
 
-            <img src="manage_event.png" class="img-fluid z-depth-1-half" alt="">
+            <img src="{{ url_for('static',filename = 'img/manage_event.png')}}" class="img-fluid z-depth-1-half" alt="">
           </div>
           <!--/Grid column-->
 
@@ -374,7 +374,7 @@
             <!--Grid column-->
             <div class="col-md-6 mb-4">
   
-              <img src="create_event.png" class="img-fluid z-depth-1-half" alt="">
+              <img src="{{ url_for('static',filename = 'img/create_event.png')}}" class="img-fluid z-depth-1-half" alt="">
   
             </div>
             <!--Grid column-->
@@ -438,7 +438,7 @@
 
     <!--Call to action-->
     <div class="pt-4">
-      <a class="btn btn-outline-white" href="https://mdbootstrap.com/getting-started/" target="_blank" role="button">Sign Up
+      <a class="btn btn-outline-white" href="/register" target="_blank" role="button">Sign Up
       </a>
     </div>
     <!--/.Call to action-->
@@ -454,13 +454,14 @@
 
     <!-- SCRIPTS -->
     <!-- JQuery -->
-    <script type="text/javascript" src="js/jquery-3.3.1.min.js"></script>
-    <!-- Bootstrap tooltips -->
-    <script type="text/javascript" src="js/popper.min.js"></script>
-    <!-- Bootstrap core JavaScript -->
-    <script type="text/javascript" src="js/bootstrap.min.js"></script>
-    <!-- MDB core JavaScript -->
-    <script type="text/javascript" src="js/mdb.min.js"></script>
+    <script type="text/javascript" src="{{ url_for('static',filename = 'js/jquery-3.3.1.min.js')}}"></script>
+  <!-- Bootstrap tooltips -->
+  <script type="text/javascript" src="{{ url_for('static',filename = 'js/popper.min.js')}}"></script>
+  <!-- Bootstrap core JavaScript -->
+  <script type="text/javascript" src="{{ url_for('static',filename = 'js/bootstrap.min.js')}}"></script>
+  <!-- MDB core JavaScript -->
+  <script type="text/javascript" src="{{ url_for('static',filename = 'js/mdb.min.js')}}"></script>
+  <script type="text/javascript" src="{{ url_for('static',filename = 'js/angular.min.js')}}"></script>
       <!-- Initializations -->
   <script type="text/javascript">
     // Animations initialization

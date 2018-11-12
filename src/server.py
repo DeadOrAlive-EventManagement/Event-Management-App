@@ -23,11 +23,13 @@ cursor = db.cursor()
 @app.route('/')
 def index():
     '''This function renders the index page of the EventManagement site'''
-    if 'customer_id' in session:
-        return redirect(url_for("home"))
-    elif 'vendor_id' in session:
-        return redirect(url_for("services"))
-    return render_template('index.html')
+    print(request.method)
+    return render_template('new_landing.html')
+    # if 'customer_id' in session:
+    #     return redirect(url_for("home"))
+    # elif 'vendor_id' in session:
+    #     return redirect(url_for("services"))
+    # return render_template('index.html')
 
 @app.route('/checkemail',methods = ['POST','GET'])
 def check_email():
@@ -231,17 +233,20 @@ def do_signin():
     # If we still reach here, it means that the user is not a registered one
     return "False"
 
-@app.route('/signin',methods=['POST'])
+@app.route('/signin',methods=['GET','POST'])
 def signin():
     '''Redirects to correct page if session values are set
     This is because password checking is done as part of form validation'''
-
-    if('customer_id' in session):
-        return redirect(url_for('home'))
-    elif('vendor_id') in session:
-        # TODO(JyothsnaKS): Fix header for vendor
-        return redirect(url_for('home'))
-    return redirect(url_for('index'))
+    print(request.method)
+    if request.method == 'POST':
+        if('customer_id' in session):
+            return redirect(url_for('home'))
+        elif('vendor_id') in session:
+            # TODO(JyothsnaKS): Fix header for vendor
+            return redirect(url_for('services'))
+    else:
+        return render_template('index.html')
+    return render_template('index.html')
     # return "False"
 
 @app.route('/home')
