@@ -72,8 +72,13 @@
 
       // Call to server to delete the event and all related information
       $.post("cancelevent", data, function(results) {
-        // Remove the div element
-        event_target.parentElement.parentElement.innerHTML = "";
+
+        if(results == 'false'){
+          alert('Sorry, but we cannot cancel the event since the we need atleast 10 days prior notification');
+        } else {
+          // Remove the div element
+          event_target.parentElement.parentElement.innerHTML = "";
+        }
       });
     }
   }

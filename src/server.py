@@ -9,6 +9,7 @@ from email.mime.text import MIMEText
 from itsdangerous import URLSafeSerializer, BadSignature
 import pymysql
 import smtplib
+import datetime
 
 COMPANY_EMAIL_ADDRESS = 'alivedead068@gmail.com'
 PASSWORD = 'deadoraliveisasecret'
@@ -242,7 +243,7 @@ def signin():
         if('customer_id' in session):
             return redirect(url_for('home'))
         elif('vendor_id') in session:
-            # TODO(JyothsnaKS): Fix header for vendor
+            # TODO: Fix header for vendor
             return redirect(url_for('services'))
     else:
         return render_template('index.html')
@@ -301,7 +302,7 @@ def home():
         for event in events:
             row = events[event]["meta"]
 
-            # TODO(JyothsnaKS): Replace this event id to ensure uniqueness
+            # TODO: Replace this event id to ensure uniqueness
             event_name = row[1]
             # Uniquely identifies all events
             events[event_name]["eventid"] = row[0]
@@ -341,7 +342,6 @@ def home():
 
             # Delete the metadata gathered earlier as this is no longer required
             del events[event_name]["meta"]
-
         return render_template('manage_events.html', name = session['name'], events = events)
     return redirect(url_for('index'))
 
@@ -402,7 +402,7 @@ def addservice():
         cursor.execute(sql, args)
         db.commit()
 
-        # TODO(JyothsnaKS): Find a better way to return service_id for the remove button id
+        # TODO: Find a better way to return service_id for the remove button id
         # Or perform check to ensure service name is unique
         sql = "SELECT service_id from services where vendor_id=%s and service_name=%s"
         args = ([vendor_id, service_name])
@@ -463,19 +463,42 @@ def services():
 
 @app.route("/cancelevent", methods=['POST'])
 def cancelevent():
-    # TODO(JyothsnaKS): Perform checks on data and other condition to decide if customer is allowed
+    # TODO: Perform checks on data and other condition to decide if customer is allowed
     # to delete the event.
     cursor = db.cursor()
+    eventid = request.form['eventid']
+    customer = session['name']
+
+    sql = "SELECT email,vendor_name,date_event from bookings cross join vendor,events where bookings.event_id=%s and vendor.vendor_id=bookings.vendor_id;;"
+    args = ([eventid])
+    cursor.execute(sql, args)
+    results = cursor.fetchall()
+
+    # Check the event date before cancellation
+    event_date = results[0][2]
+    if (event_date - datetime.date.today()).days == 0:
+        return 'false'
+
+    # Send email to every vendor participating in the events
+    for row in results:
+        message_template = read_template('notify_vendor.txt')
+        message = message_template.substitute(CUSTOMER_NAME=customer, VENDOR_NAME=row[1])
+        print(message)
+        subject = 'DeadOrAlive: Event Cancellation'
+        email_service(row[0], subject, message)
+
     sql = "DELETE from bookings where event_id=%s"
-    args = ([request.form['eventid']])
+    args = ([eventid])
     cursor.execute(sql, args)
     db.commit()
+    
     sql = "DELETE from events where event_id=%s"
-    args = ([request.form['eventid']])
+    args = ([eventid])
     cursor.execute(sql, args)
+
     db.commit()
     cursor.close()
-
+    
     if 'customer_id' in session:
         return redirect(url_for('home'))
     return redirect(url_for('index'))
@@ -509,7 +532,7 @@ def manage_vendor():
         for event in events:
             row = events[event]["meta"]
 
-            # TODO(JyothsnaKS): Replace this event id to ensure uniqueness
+            # TODO: Replace this event id to ensure uniqueness
             event_name = row[1]
             # Uniquely identifies all events
             events[event_name]["eventid"] = row[0]

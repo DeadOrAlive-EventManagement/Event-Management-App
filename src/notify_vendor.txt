@@ -1,0 +1,6 @@
+Dear ${VENDOR_NAME},
+
+${CUSTOMER_NAME} has cancelled the event and no longer requires your services.
+
+Thank you,
+DeadOrAlive Team
