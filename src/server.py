@@ -587,12 +587,33 @@ def rejectevent():
     cursor.execute(sql, args)
     db.commit()
 
+    sql = "SELECT c.first_name, c.email, v.vendor_name from bookings b, customer c, vendor v where c.customer_id=b.customer_id and b.service_id=%s and v.vendor_id= b.vendor_id"
+    args = ([request.form['serviceid']])
+    cursor.execute(sql, args)
+    results = cursor.fetchall()
+    status = "Accepted"
+    emo = "pleased"
+    if(request.form['status'] == '2'):
+        status = 'Rejected'
+        emo = "sorry"
+    
+    for row in results:
+        print(row)
+        message_template = read_template('notify_customer.txt')
+        message = message_template.substitute(CUSTOMER_NAME=row[0], VENDOR_NAME=row[2],STATUS=status,EMOTION=emo)
+        print(message)
+        subject = 'DeadOrAlive: Event '+status
+        email_service(row[1], subject, message)
+
     cursor.close()
+    
     return redirect(url_for('manage_vendor'))
     #I have no idea why the below is present. Keeping it to maintain consistency with cancel event
     if 'customer_id' in session:
         return redirect(url_for('home'))
     return redirect(url_for('index'))
+
+
 
 '''
 Returns a Template object comprising the contents of the
