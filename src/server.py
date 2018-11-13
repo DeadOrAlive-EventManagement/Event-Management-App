@@ -363,6 +363,15 @@ def contact():
         return render_template('contact.html', name = session['name'])
     return render_template('contact.html',name = "")
 
+@app.route('/help')
+def help():
+    '''This function shows the user the help page. Username will be displayed top right,
+   '''
+    # use render template functionality to automatically add name and other data
+    if 'name' in session:
+        return render_template('help.html', name = session['name'])
+    return render_template('help.html',name = "")
+
 @app.route('/contactSend', methods=['GET','POST'])
 def contacted():
     '''This function shows the user the contact us page. Username will be displayed top right,
